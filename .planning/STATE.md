@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 1 of 7 (Foundation)
-Plan: 2 of ? in current phase (01-02 complete)
+Plan: 3 of ? in current phase (01-03 complete)
 Status: In progress
-Last activity: 2026-07-03 — Plan 01-02 executed (Supabase schema and typed client)
+Last activity: 2026-07-03 — Plan 01-03 executed (AAAH branding — assets, Tailwind tokens, root layout)
 
-Progress: ██░░░░░░░░ 20%
+Progress: ███░░░░░░░ 30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 15 min
-- Total execution time: 0.25 hours
+- Total plans completed: 3
+- Average duration: 17 min
+- Total execution time: 0.85 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 1/? | 15 min | 15 min |
+| 01-foundation | 3/? | 52 min | 17 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15 min)
-- Trend: Baseline established
+- Last 5 plans: 01-01 (15 min), 01-02 (12 min), 01-03 (25 min)
+- Trend: Stable, 01-03 longer due to human-verify checkpoint
 
 ## Accumulated Context
 
@@ -46,6 +46,9 @@ Recent decisions affecting current work:
 - **questions excluded from realtime publication** — read-only after seed; no realtime needed on that table.
 - **Manual TypeScript types in src/types/database.ts** — avoids Supabase CLI toolchain dependency; types are explicit and reviewable.
 - **.env.local.example force-committed** — .env* gitignore pattern would exclude it; force-added since it holds only placeholder values.
+- **Montserrat via next/font/google** — AAAH Branding/Montserrat/ folder was empty; Google Fonts via Next.js is the correct approach.
+- **Tailwind v4 CSS-first colour tokens** — No tailwind.config.ts extension needed; tokens defined in globals.css @theme block become utility classes automatically.
+- **CSS body override removed** — Default create-next-app globals.css had body{background} and body{font-family} that overrode the branded gradient and Montserrat; removed in 01-03.
 
 ### Deferred Issues
 
@@ -58,5 +61,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-03
-Stopped at: Plan 01-02 complete
-Resume file: .planning/phases/01-foundation/01-02-SUMMARY.md
+Stopped at: Plan 01-03 complete
+Resume file: .planning/phases/01-foundation/01-03-SUMMARY.md
