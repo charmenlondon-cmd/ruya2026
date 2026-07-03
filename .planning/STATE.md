@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-07-03)
 
 **Core value:** Stunning display + reliable realtime sync + animated hired network + smooth bilingual player experience
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — Realtime Game Engine
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation)
-Plan: 3 of ? in current phase (01-03 complete)
+Phase: 2 of 7 (Realtime Game Engine)
+Plan: 1 of ? in current phase (02-01 complete)
 Status: In progress
-Last activity: 2026-07-03 — Plan 01-03 executed (AAAH branding — assets, Tailwind tokens, root layout)
+Last activity: 2026-07-03 — Plan 02-01 executed (session CRUD layer and useSession hook)
 
-Progress: ███░░░░░░░ 30%
+Progress: ████░░░░░░ 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 17 min
-- Total execution time: 0.85 hours
+- Total plans completed: 4
+- Average duration: 20 min
+- Total execution time: 1.43 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 3/? | 52 min | 17 min |
+| 01-foundation | 3/3 | 52 min | 17 min |
+| 02-realtime-game-engine | 1/? | 35 min | 35 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15 min), 01-02 (12 min), 01-03 (25 min)
-- Trend: Stable, 01-03 longer due to human-verify checkpoint
+- Last 5 plans: 01-01 (15 min), 01-02 (12 min), 01-03 (25 min), 02-01 (35 min)
+- Trend: 02-01 longer due to TypeScript interface/type compatibility investigation
 
 ## Accumulated Context
 
@@ -49,6 +50,9 @@ Recent decisions affecting current work:
 - **Montserrat via next/font/google** — AAAH Branding/Montserrat/ folder was empty; Google Fonts via Next.js is the correct approach.
 - **Tailwind v4 CSS-first colour tokens** — No tailwind.config.ts extension needed; tokens defined in globals.css @theme block become utility classes automatically.
 - **CSS body override removed** — Default create-next-app globals.css had body{background} and body{font-family} that overrode the branded gradient and Montserrat; removed in 01-03.
+- **Database types must use type aliases not interfaces** — TypeScript `interface` does not extend `Record<string, unknown>`; Supabase's `GenericTable` requires `Row: Record<string, unknown>`. Use `type Session = {...}` not `interface Session`. Discovered in 02-01.
+- **Database type requires Relationships/Views/Functions** — The Supabase client's `GenericSchema` constraint requires each table to have `Relationships: GenericRelationship[]` and the schema to have `Views` and `Functions` fields. Without them, `from().insert()` and `from().update()` resolve to `never`. Added in 02-01.
+- **Session CRUD: full insert payload required** — `Insert` type is `Omit<Session, 'id' | 'created_at' | 'updated_at'>` requiring all non-omitted fields. DB defaults handle `id`/timestamps; application code must supply all other fields explicitly.
 
 ### Deferred Issues
 
@@ -61,5 +65,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-03
-Stopped at: Plan 01-03 complete
-Resume file: .planning/phases/01-foundation/01-03-SUMMARY.md
+Stopped at: Plan 02-01 complete
+Resume file: .planning/phases/02-realtime-game-engine/02-01-SUMMARY.md
