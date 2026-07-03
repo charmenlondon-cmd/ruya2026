@@ -10,6 +10,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* AAAH brand colours */
+  --color-aaah-dark-teal: #0D5C6B;
+  --color-aaah-light-teal: #7BBFC6;
+  --color-aaah-near-black: #1A1A2E;
+
+  /* AAAH brand gradient */
+  --background-image-aaah-gradient: linear-gradient(135deg, #0D5C6B 0%, #7BBFC6 100%);
 }
 
 @media (prefers-color-scheme: dark) {
