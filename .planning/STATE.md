@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 2 of 7 (Realtime Game Engine)
-Plan: 1 of ? in current phase (02-01 complete)
-Status: In progress
-Last activity: 2026-07-03 — Plan 02-01 executed (session CRUD layer and useSession hook)
+Plan: 2 of ? in current phase (02-02 tasks complete, awaiting checkpoint:human-verify)
+Status: In progress — PAUSED at checkpoint
+Last activity: 2026-07-03 — Plan 02-02 tasks 1+2 executed (controller and display scaffolds); checkpoint:human-verify pending
 
-Progress: ████░░░░░░ 40%
+Progress: ████░░░░░░ 45%
 
 ## Performance Metrics
 
@@ -29,10 +29,11 @@ Progress: ████░░░░░░ 40%
 |-------|-------|-------|----------|
 | 01-foundation | 3/3 | 52 min | 17 min |
 | 02-realtime-game-engine | 1/? | 35 min | 35 min |
+| 02-02 (partial) | tasks 1-2 of 3 | 15 min | — |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15 min), 01-02 (12 min), 01-03 (25 min), 02-01 (35 min)
-- Trend: 02-01 longer due to TypeScript interface/type compatibility investigation
+- Last 5 plans: 01-01 (15 min), 01-02 (12 min), 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min)
+- Trend: 02-01 longer due to TypeScript interface/type compatibility investigation; 02-02 very fast — just wired components
 
 ## Accumulated Context
 
@@ -53,6 +54,8 @@ Recent decisions affecting current work:
 - **Database types must use type aliases not interfaces** — TypeScript `interface` does not extend `Record<string, unknown>`; Supabase's `GenericTable` requires `Row: Record<string, unknown>`. Use `type Session = {...}` not `interface Session`. Discovered in 02-01.
 - **Database type requires Relationships/Views/Functions** — The Supabase client's `GenericSchema` constraint requires each table to have `Relationships: GenericRelationship[]` and the schema to have `Views` and `Functions` fields. Without them, `from().insert()` and `from().update()` resolve to `never`. Added in 02-01.
 - **Session CRUD: full insert payload required** — `Insert` type is `Omit<Session, 'id' | 'created_at' | 'updated_at'>` requiring all non-omitted fields. DB defaults handle `id`/timestamps; application code must supply all other fields explicitly.
+- **useSession() takes no args** — hook auto-discovers active session via `getActiveSession()` + Realtime INSERT event. Both controller and display use it identically.
+- **Controller creates session on mount; display subscribes independently** — No prop-drilling needed; Realtime INSERT event propagates new session to display hook automatically.
 
 ### Deferred Issues
 
@@ -65,5 +68,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-03
-Stopped at: Plan 02-01 complete
-Resume file: .planning/phases/02-realtime-game-engine/02-01-SUMMARY.md
+Stopped at: Plan 02-02 checkpoint:human-verify (Tasks 1+2 done, need human to verify real-time sync)
+Resume file: .planning/phases/02-realtime-game-engine/02-02-SUMMARY.md
