@@ -26,7 +26,7 @@ export type Track =
   | 'Project Management'
   | 'Sales & Business Development'
 
-export interface Session {
+export type Session = {
   id: string
   state: SessionState
   language: Language | null
@@ -41,7 +41,7 @@ export interface Session {
   updated_at: string
 }
 
-export interface Question {
+export type Question = {
   id: string
   track: string
   question_no: number
@@ -57,7 +57,7 @@ export interface Question {
   created_at: string
 }
 
-export interface Hire {
+export type Hire = {
   id: string
   session_id: string | null
   player_name: string
@@ -74,17 +74,28 @@ export interface Database {
         Row: Session
         Insert: Omit<Session, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<Session, 'id' | 'created_at' | 'updated_at'>>
+        Relationships: never[]
       }
       questions: {
         Row: Question
         Insert: Omit<Question, 'id' | 'created_at'>
         Update: Partial<Omit<Question, 'id' | 'created_at'>>
+        Relationships: never[]
       }
       hires: {
         Row: Hire
         Insert: Omit<Hire, 'id' | 'hired_at'>
         Update: Partial<Omit<Hire, 'id' | 'hired_at'>>
+        Relationships: never[]
       }
     }
+    Views: Record<string, {
+      Row: Record<string, unknown>
+      Relationships: []
+    }>
+    Functions: Record<string, {
+      Args: Record<string, unknown>
+      Returns: unknown
+    }>
   }
 }
