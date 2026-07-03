@@ -63,10 +63,40 @@ None yet.
 
 ### Blockers/Concerns
 
-None.
+**BLOCKING: Supabase project not yet created.**
+
+Plan 02-02 is paused at `checkpoint:human-verify` because there is no live Supabase project yet. The migration SQL and typed client are written and committed, but have never been run against a real database. `.env.local` does not exist.
 
 ## Session Continuity
 
 Last session: 2026-07-03
-Stopped at: Plan 02-02 checkpoint:human-verify (Tasks 1+2 done, need human to verify real-time sync)
-Resume file: .planning/phases/02-realtime-game-engine/02-02-SUMMARY.md
+Stopped at: Plan 02-02 checkpoint:human-verify (Tasks 1+2 done, awaiting Supabase setup + realtime sync verification)
+
+### Resume steps for Monday
+
+**Step 1 — Create Supabase project (one-time, ~5 min)**
+1. Go to supabase.com → New project
+2. Note your **Project URL** and **anon public key** (Settings → API)
+3. Open the SQL Editor, paste contents of `supabase/migrations/001_initial_schema.sql`, and run it
+
+**Step 2 — Wire credentials**
+```bash
+cp .env.local.example .env.local
+# then edit .env.local and fill in real values:
+# NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+```
+
+**Step 3 — Verify realtime sync**
+```bash
+npm run dev
+```
+- Tab 1: `http://localhost:3000/controller` — click "Next State →"
+- Tab 2: `http://localhost:3000/display` — should mirror within ~1 second
+
+**Step 4 — Resume execution**
+Once verified, reply `approved` to the checkpoint prompt and run:
+```
+/gsd:execute-phase 2
+```
+It will detect 02-01 complete, skip it, and resume 02-02 from the checkpoint.
