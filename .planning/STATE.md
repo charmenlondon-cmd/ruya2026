@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-07-03)
 
 **Core value:** Stunning display + reliable realtime sync + animated hired network + smooth bilingual player experience
-**Current focus:** Phase 2 — Realtime Game Engine
+**Current focus:** Phase 3 — Question Engine
 
 ## Current Position
 
-Phase: 2 of 7 (Realtime Game Engine)
-Plan: 2 of ? in current phase (02-02 tasks complete, awaiting checkpoint:human-verify)
-Status: In progress — PAUSED at checkpoint
-Last activity: 2026-07-03 — Plan 02-02 tasks 1+2 executed (controller and display scaffolds); checkpoint:human-verify pending
+Phase: 3 of 7 (Question Engine)
+Plan: 0 of 2 in current phase
+Status: Ready — Phase 2 complete, Phase 3 not yet planned
+Last activity: 2026-07-06 — Phase 2 checkpoint verified (realtime sync confirmed live); Phase 2 marked complete
 
-Progress: ████░░░░░░ 45%
+Progress: ██████░░░░ 57%
 
 ## Performance Metrics
 
@@ -63,40 +63,13 @@ None yet.
 
 ### Blockers/Concerns
 
-**BLOCKING: Supabase project not yet created.**
-
-Plan 02-02 is paused at `checkpoint:human-verify` because there is no live Supabase project yet. The migration SQL and typed client are written and committed, but have never been run against a real database. `.env.local` does not exist.
+None.
 
 ## Session Continuity
 
-Last session: 2026-07-03
-Stopped at: Plan 02-02 checkpoint:human-verify (Tasks 1+2 done, awaiting Supabase setup + realtime sync verification)
+Last session: 2026-07-06
+Stopped at: Phase 2 complete. Phase 3 (Question Engine) not yet planned.
 
-### Resume steps for Monday
+### Resume steps
 
-**Step 1 — Create Supabase project (one-time, ~5 min)**
-1. Go to supabase.com → New project
-2. Note your **Project URL** and **anon public key** (Settings → API)
-3. Open the SQL Editor, paste contents of `supabase/migrations/001_initial_schema.sql`, and run it
-
-**Step 2 — Wire credentials**
-```bash
-cp .env.local.example .env.local
-# then edit .env.local and fill in real values:
-# NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-# NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-```
-
-**Step 3 — Verify realtime sync**
-```bash
-npm run dev
-```
-- Tab 1: `http://localhost:3000/controller` — click "Next State →"
-- Tab 2: `http://localhost:3000/display` — should mirror within ~1 second
-
-**Step 4 — Resume execution**
-Once verified, reply `approved` to the checkpoint prompt and run:
-```
-/gsd:execute-phase 2
-```
-It will detect 02-01 complete, skip it, and resume 02-02 from the checkpoint.
+Run `/gsd:plan-phase 3` to plan the Question Engine phase, then `/gsd:execute-phase 3`.
