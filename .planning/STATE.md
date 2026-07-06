@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 Phase: 3 of 7 (Question Engine)
 Plan: 2 of 2 in current phase
-Status: Phase 3 complete — all plans executed
-Last activity: 2026-07-06 — Phase 3 plan 02 complete; getQuestionsForTrack loader created and TypeScript verified clean
+Status: Phase 3 complete — all plans executed and seeded
+Last activity: 2026-07-06 — Phase 3 plan 01 seed completed; 200 rows and 12 images in Supabase (deferred from original execution due to missing SUPABASE_SERVICE_ROLE_KEY)
 
 Progress: ███████░░░ 65%
 
@@ -29,7 +29,7 @@ Progress: ███████░░░ 65%
 |-------|-------|-------|----------|
 | 01-foundation | 3/3 | 52 min | 17 min |
 | 02-realtime-game-engine | 2/2 | 50 min | 25 min |
-| 03-question-engine | 2/2 | ~10 min | ~5 min |
+| 03-question-engine | 2/2 | ~25 min | ~12 min |
 
 **Recent Trend:**
 - Last 5 plans: 01-01 (15 min), 01-02 (12 min), 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min)
@@ -57,6 +57,9 @@ Recent decisions affecting current work:
 - **useSession() takes no args** — hook auto-discovers active session via `getActiveSession()` + Realtime INSERT event. Both controller and display use it identically.
 - **Controller creates session on mount; display subscribes independently** — No prop-drilling needed; Realtime INSERT event propagates new session to display hook automatically.
 - **getQuestionsForTrack: no caching/retry in loader** — Caching, retry, and prefetch belong in the consumer hooks (Phase 4/5), not in the data-access function. Loader is intentionally thin: one query, typed return, throw on error.
+- **Image answers are EN-only in Supabase** — Arabic counterparts of the 4 image questions (Architecture & Design Q6, Legal & Compliance Q6, Marketing Q9, Operations & Supply Chain Q4) store Arabic text descriptions in answer_X_text; answer_X_image_url is null for AR rows.
+- **Supabase Storage bucket "question-images" is public** — Images served via CDN URLs with no auth. Safe for event-day use.
+- **Seed script is idempotent** — Delete-all before insert + upsert on image upload; safe to re-run if data needs refreshing.
 
 ### Deferred Issues
 
@@ -69,7 +72,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-06
-Stopped at: Phase 3 complete. All 2 plans executed. Ready for Phase 4 (Controller UI).
+Stopped at: Phase 3 fully complete. All 2 plans executed and seed data confirmed (200 rows, 12 images in Supabase). Ready for Phase 4 (Controller UI).
 
 ### Resume steps
 
