@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Next.js scaffold, Supabase schema, AAAH branding, route layout
 - [x] **Phase 2: Realtime Game Engine** - Session state machine, Supabase Realtime channel, controller↔display sync
-- [ ] **Phase 3: Question Engine** - Load questions from Supabase, CSV seed script, image-answer support
+- [x] **Phase 3: Question Engine** - Load questions from Supabase, CSV seed script, image-answer support
 - [ ] **Phase 4: Controller UI** - iPad: language/avatar/name/track selection + quiz A/B/C buttons + RTL
 - [ ] **Phase 5: Display Screen** - Question display, player info, results screen, screensaver mode
 - [ ] **Phase 6: Hired Network** - D3/Canvas animated "hired" visualization growing through the day
@@ -55,8 +55,8 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 03-01: CSV seed script — parse Question Matrix.csv and seed all 100 questions (EN + AR) to Supabase
-- [ ] 03-02: Question loader — fetch questions by track and language at runtime, with image-answer URL support
+- [x] 03-01: CSV seed script — parse Question Matrix.csv and seed all 100 questions (EN + AR) to Supabase
+- [x] 03-02: Question loader — fetch questions by track and language at runtime, with image-answer URL support
 
 ### Phase 4: Controller UI
 **Goal**: Full iPad controller flow from language selection through quiz completion, with Arabic RTL throughout
@@ -110,7 +110,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-07-03 |
 | 2. Realtime Game Engine | 2/2 | Complete | 2026-07-06 |
-| 3. Question Engine | 0/2 | Not started | - |
+| 3. Question Engine | 2/2 | Complete | 2026-07-06 |
 | 4. Controller UI | 0/3 | Not started | - |
 | 5. Display Screen | 0/3 | Not started | - |
 | 6. Hired Network | 0/2 | Not started | - |
