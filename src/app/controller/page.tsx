@@ -7,6 +7,7 @@ import { LanguageSelectScreen } from '@/components/controller/LanguageSelectScre
 import { AvatarSelectScreen } from '@/components/controller/AvatarSelectScreen'
 import { NameEntryScreen } from '@/components/controller/NameEntryScreen'
 import { TrackSelectScreen } from '@/components/controller/TrackSelectScreen'
+import { QuizScreen } from '@/components/controller/QuizScreen'
 import type { Session } from '@/types/database'
 
 function IdleScreen({ session }: { session: Session }) {
@@ -61,11 +62,12 @@ export default function ControllerPage() {
             return <TrackSelectScreen session={session} />
           case 'question_active':
           case 'answer_submitted':
+            return <QuizScreen session={session} />
           case 'question_result':
           case 'final_result':
             return (
               <div className="text-white text-xl p-8">
-                Quiz interface coming in Plan 04-02
+                Result screens coming in Plan 04-02 Task 2
               </div>
             )
           default:
