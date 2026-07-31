@@ -65,8 +65,8 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 04-01: Onboarding flow — language select, avatar select (10 avatars), name entry, track select (10 tracks)
-- [ ] 04-02: Quiz interface — A/B/C answer buttons, question number indicator, answer submission
+- [x] 04-01: Onboarding flow — language select, avatar select (10 avatars), name entry, track select (10 tracks)
+- [x] 04-02: Quiz interface — A/B/C answer buttons, question number indicator, answer submission
 - [ ] 04-03: Arabic RTL layout — full RTL support across all controller screens
 
 ### Phase 5: Display Screen
@@ -111,7 +111,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Foundation | 3/3 | Complete | 2026-07-03 |
 | 2. Realtime Game Engine | 2/2 | Complete | 2026-07-06 |
 | 3. Question Engine | 2/2 | Complete | 2026-07-06 |
-| 4. Controller UI | 0/3 | Not started | - |
+| 4. Controller UI | 2/3 | In progress | - |
 | 5. Display Screen | 0/3 | Not started | - |
 | 6. Hired Network | 0/2 | Not started | - |
 | 7. Admin Panel & Deploy | 0/2 | Not started | - |

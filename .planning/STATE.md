@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 4 of 7 (Controller UI)
-Plan: 1 of 3 in current phase — complete
-Status: Plan 04-01 complete — controller page orchestrator + onboarding screens built
-Last activity: 2026-07-31 — Plan 04-01 executed; controller page rewritten with state-based router; 4 onboarding screens created (language, avatar, name, track)
+Plan: 2 of 3 in current phase — complete
+Status: Plan 04-02 complete — full gameplay loop built (quiz, result screens, hire logic)
+Last activity: 2026-07-31 — Plan 04-02 executed; QuizScreen, QuestionResultScreen, FinalResultScreen built; createHire() writes to hires table
 
-Progress: ████████░░ 75%
+Progress: ████████░░ 80%
 
 ## Performance Metrics
 
@@ -30,7 +30,7 @@ Progress: ████████░░ 75%
 | 01-foundation | 3/3 | 52 min | 17 min |
 | 02-realtime-game-engine | 2/2 | 50 min | 25 min |
 | 03-question-engine | 2/2 | ~25 min | ~12 min |
-| 04-controller-ui | 1/3 | ~15 min | — |
+| 04-controller-ui | 2/3 | ~35 min | ~17 min |
 
 **Recent Trend:**
 - Last 5 plans: 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min), 03-01 (seed), 04-01 (~15 min)
@@ -58,6 +58,9 @@ Recent decisions affecting current work:
 - **useSession() takes no args** — hook auto-discovers active session via `getActiveSession()` + Realtime INSERT event. Both controller and display use it identically.
 - **Controller creates session on mount; display subscribes independently** — No prop-drilling needed; Realtime INSERT event propagates new session to display hook automatically.
 - **getQuestionsForTrack: no caching/retry in loader** — Caching, retry, and prefetch belong in the consumer hooks (Phase 4/5), not in the data-access function. Loader is intentionally thin: one query, typed return, throw on error.
+- **createHire guarded by useRef(false)** — FinalResultScreen calls createHire once on mount; useRef prevents duplicate inserts from React strict mode double-fires or re-renders.
+- **answered local state disables buttons on tap** — Prevents double-taps before Supabase responds; reset on current_question change.
+- **1500ms auto-advance answer_submitted → question_result** — Gives display screen time to reflect submitted state via Realtime before advancing.
 - **Image answers are EN-only in Supabase** — Arabic counterparts of the 4 image questions (Architecture & Design Q6, Legal & Compliance Q6, Marketing Q9, Operations & Supply Chain Q4) store Arabic text descriptions in answer_X_text; answer_X_image_url is null for AR rows.
 - **Supabase Storage bucket "question-images" is public** — Images served via CDN URLs with no auth. Safe for event-day use.
 - **Seed script is idempotent** — Delete-all before insert + upsert on image upload; safe to re-run if data needs refreshing.
@@ -73,8 +76,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: Phase 4, Plan 01 complete. Controller page rewritten with state-based screen router. 4 onboarding screen components built (LanguageSelectScreen, AvatarSelectScreen, NameEntryScreen, TrackSelectScreen). TypeScript clean, build passes.
+Stopped at: Phase 4, Plan 02 complete. Full gameplay loop built: QuizScreen (questions + A/B/C buttons), QuestionResultScreen (feedback + running score), FinalResultScreen (final score + hired outcome + play again). TypeScript clean, build passes.
 
 ### Resume steps
 
-Execute plan 04-02 to build the quiz flow (question_active → answer_submitted → question_result → final_result).
+Execute plan 04-03 to add Arabic RTL layout across all controller screens.
