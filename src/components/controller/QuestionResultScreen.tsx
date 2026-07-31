@@ -1,15 +1,18 @@
 'use client'
 
 import { updateSession } from '@/lib/session'
-import type { Session } from '@/types/database'
+import { t } from '@/lib/i18n'
+import type { Language, Session } from '@/types/database'
 
 interface Props {
   session: Session
+  language: Language
 }
 
-export function QuestionResultScreen({ session }: Props) {
+export function QuestionResultScreen({ session, language }: Props) {
   const isCorrect = session.last_answer_correct
   const questionsAnswered = session.current_question + 1
+  const strings = t(language)
 
   function handleNext() {
     if (session.current_question < 9) {
@@ -41,12 +44,12 @@ export function QuestionResultScreen({ session }: Props) {
             isCorrect ? 'text-green-600' : 'text-red-600'
           }`}
         >
-          {isCorrect ? 'Correct!' : 'Incorrect'}
+          {isCorrect ? strings.correct : strings.incorrect}
         </h2>
 
         {/* Running score */}
         <p className="text-aaah-dark-teal text-lg font-semibold">
-          Score: {session.score} / {questionsAnswered}
+          {strings.score(session.score, questionsAnswered)}
         </p>
       </div>
 
@@ -55,7 +58,7 @@ export function QuestionResultScreen({ session }: Props) {
         onClick={handleNext}
         className="bg-white text-aaah-dark-teal font-semibold rounded-2xl px-10 py-5 text-lg hover:bg-white/90 active:scale-95 transition-all min-h-16"
       >
-        {session.current_question < 9 ? 'Next Question →' : 'See Final Score →'}
+        {session.current_question < 9 ? strings.nextQuestion : strings.seeFinalScore}
       </button>
     </div>
   )

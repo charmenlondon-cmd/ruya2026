@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { updateSession } from '@/lib/session'
 import { getQuestionsForTrack } from '@/lib/questions'
-import type { Session, Question, CorrectAnswer } from '@/types/database'
+import { t } from '@/lib/i18n'
+import type { Language, Session, Question, CorrectAnswer } from '@/types/database'
 
 interface Props {
   session: Session
+  language: Language
 }
 
 type AnswerDef = {
@@ -22,7 +24,8 @@ const ANSWERS: AnswerDef[] = [
   { key: 'C', textKey: 'answer_c_text', imageKey: 'answer_c_image_url' },
 ]
 
-export function QuizScreen({ session }: Props) {
+export function QuizScreen({ session, language }: Props) {
+  const strings = t(language)
   const [questions, setQuestions] = useState<Question[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
   const [answered, setAnswered] = useState(false)
@@ -90,7 +93,7 @@ export function QuizScreen({ session }: Props) {
     <div className="flex flex-col items-center w-full max-w-lg gap-4">
       {/* Progress */}
       <p className="text-white text-sm font-semibold">
-        Question {session.current_question + 1} of 10
+        {strings.questionOf(session.current_question + 1, 10)}
       </p>
 
       {/* Question card */}

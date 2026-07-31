@@ -1,16 +1,19 @@
 'use client'
 
 import { updateSession } from '@/lib/session'
-import type { Session } from '@/types/database'
+import { t } from '@/lib/i18n'
+import type { Language, Session } from '@/types/database'
 
 interface Props {
   session: Session
+  language: Language
 }
 
-export function LanguageSelectScreen({ session }: Props) {
+export function LanguageSelectScreen({ session, language }: Props) {
+  const strings = t(language)
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-2xl font-bold text-white mb-8">Select Language</h2>
+      <h2 className="text-2xl font-bold text-white mb-8">{strings.selectLanguage}</h2>
       <div className="flex gap-6">
         <button
           onClick={() => updateSession(session.id, { language: 'en', state: 'avatar_select' })}

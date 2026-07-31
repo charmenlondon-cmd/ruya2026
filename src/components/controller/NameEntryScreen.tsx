@@ -2,14 +2,17 @@
 
 import { useState } from 'react'
 import { updateSession } from '@/lib/session'
-import type { Session } from '@/types/database'
+import { t } from '@/lib/i18n'
+import type { Language, Session } from '@/types/database'
 
 interface Props {
   session: Session
+  language: Language
 }
 
-export function NameEntryScreen({ session }: Props) {
+export function NameEntryScreen({ session, language }: Props) {
   const [name, setName] = useState('')
+  const strings = t(language)
 
   const disabled = name.trim() === ''
 
@@ -20,7 +23,7 @@ export function NameEntryScreen({ session }: Props) {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <h2 className="text-2xl font-bold text-white mb-6">Enter Your Name</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">{strings.enterName}</h2>
       <input
         type="text"
         value={name}
@@ -28,7 +31,7 @@ export function NameEntryScreen({ session }: Props) {
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleSubmit()
         }}
-        placeholder="Your name"
+        placeholder={strings.namePlaceholder}
         autoFocus
         autoComplete="off"
         className="bg-white rounded-xl border-none p-4 text-xl text-aaah-dark-teal w-full max-w-sm mb-6 outline-none"
@@ -40,7 +43,7 @@ export function NameEntryScreen({ session }: Props) {
           disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-aaah-light-teal/20'
         }`}
       >
-        Continue
+        {strings.continue}
       </button>
     </div>
   )

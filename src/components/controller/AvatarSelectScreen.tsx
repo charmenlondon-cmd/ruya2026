@@ -2,20 +2,23 @@
 
 import Image from 'next/image'
 import { updateSession } from '@/lib/session'
-import type { Session } from '@/types/database'
+import { t } from '@/lib/i18n'
+import type { Language, Session } from '@/types/database'
 
 interface Props {
   session: Session
+  language: Language
 }
 
 const FEMALE_AVATARS = [1, 2, 3, 4, 5].map((n) => `female-avatar-${n}`)
 const MALE_AVATARS = [1, 2, 3, 4, 5].map((n) => `male-avatar-${n}`)
 const ALL_AVATARS = [...FEMALE_AVATARS, ...MALE_AVATARS]
 
-export function AvatarSelectScreen({ session }: Props) {
+export function AvatarSelectScreen({ session, language }: Props) {
+  const strings = t(language)
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-2xl font-bold text-white mb-6">Choose Your Avatar</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">{strings.chooseAvatar}</h2>
       <div className="grid grid-cols-5 gap-4">
         {ALL_AVATARS.map((avatarId) => (
           <button

@@ -1,0 +1,66 @@
+import type { Language, Track } from '@/types/database'
+
+const strings = {
+  en: {
+    selectLanguage: 'Select Language',
+    chooseAvatar: 'Choose Your Avatar',
+    enterName: 'Enter Your Name',
+    namePlaceholder: 'Your name',
+    continue: 'Continue',
+    chooseTrack: 'Choose Your Track',
+    questionOf: (c: number, total: number) => `Question ${c} of ${total}`,
+    correct: 'Correct! ✓',
+    incorrect: 'Incorrect ✗',
+    score: (c: number, total: number) => `Score: ${c} / ${total}`,
+    nextQuestion: 'Next Question →',
+    seeFinalScore: 'See Final Score →',
+    finalScore: (s: number) => `${s} / 10`,
+    youreHired: "You're Hired! 🎉",
+    hiredMessage: "Congratulations! You're the perfect fit for AAAH.",
+    wellGetBack: "We'll Get Back to You",
+    getBackMessage: 'Great effort! Keep developing your skills.',
+    playAgain: 'Play Again',
+    tapToStart: 'Tap to Start',
+    start: 'Start',
+    trackName: (track: Track) => track as string,
+  },
+  ar: {
+    selectLanguage: 'اختر اللغة',
+    chooseAvatar: 'اختر صورتك الشخصية',
+    enterName: 'أدخل اسمك',
+    namePlaceholder: 'اسمك',
+    continue: 'متابعة',
+    chooseTrack: 'اختر تخصصك',
+    questionOf: (c: number, total: number) => `السؤال ${c} من ${total}`,
+    correct: 'صحيح! ✓',
+    incorrect: 'خطأ ✗',
+    score: (c: number, total: number) => `النتيجة: ${c} / ${total}`,
+    nextQuestion: '← السؤال التالي',
+    seeFinalScore: '← عرض النتيجة النهائية',
+    finalScore: (s: number) => `${s} / 10`,
+    youreHired: '!تم توظيفك 🎉',
+    hiredMessage: '.تهانينا! أنت مناسب تماماً لمجموعة عبدالله العريف',
+    wellGetBack: 'سنتواصل معك',
+    getBackMessage: '.جهد رائع! استمر في تطوير مهاراتك',
+    playAgain: 'العب مرة أخرى',
+    tapToStart: 'ابدأ',
+    start: 'ابدأ',
+    trackName: (track: Track): string =>
+      (({
+        'Engineering': 'الهندسة',
+        'Finance': 'المالية',
+        'Architecture & Design': 'العمارة والتصميم',
+        'Human Resources': 'الموارد البشرية',
+        'IT': 'تقنية المعلومات',
+        'Legal & Compliance': 'الشؤون القانونية والامتثال',
+        'Marketing': 'التسويق',
+        'Operations & Supply Chain': 'العمليات وسلسلة التوريد',
+        'Project Management': 'إدارة المشاريع',
+        'Sales & Business Development': 'المبيعات وتطوير الأعمال',
+      }) as Record<string, string>)[track] ?? track,
+  },
+} as const
+
+export function t(language: Language) {
+  return strings[language]
+}

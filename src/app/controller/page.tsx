@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createSession, updateSession } from '@/lib/session'
 import { useSession } from '@/hooks/useSession'
+import { t } from '@/lib/i18n'
 import { LanguageSelectScreen } from '@/components/controller/LanguageSelectScreen'
 import { AvatarSelectScreen } from '@/components/controller/AvatarSelectScreen'
 import { NameEntryScreen } from '@/components/controller/NameEntryScreen'
@@ -10,17 +11,19 @@ import { TrackSelectScreen } from '@/components/controller/TrackSelectScreen'
 import { QuizScreen } from '@/components/controller/QuizScreen'
 import { QuestionResultScreen } from '@/components/controller/QuestionResultScreen'
 import { FinalResultScreen } from '@/components/controller/FinalResultScreen'
-import type { Session } from '@/types/database'
+import type { Language, Session } from '@/types/database'
 
 function IdleScreen({ session }: { session: Session }) {
+  const lang: Language = session.language ?? 'en'
+  const strings = t(lang)
   return (
     <div className="flex flex-col items-center justify-center gap-8">
-      <h1 className="text-4xl font-bold text-white">Tap to Start</h1>
+      <h1 className="text-4xl font-bold text-white">{strings.tapToStart}</h1>
       <button
         onClick={() => updateSession(session.id, { state: 'language_select' })}
         className="bg-aaah-light-teal text-white font-semibold rounded-2xl px-12 py-6 text-xl hover:bg-aaah-dark-teal active:scale-95 transition-all min-h-16"
       >
-        Start
+        {strings.start}
       </button>
     </div>
   )
@@ -36,8 +39,11 @@ export default function ControllerPage() {
     createSession().catch(console.error)
   }
 
+  const language: Language = session?.language ?? 'en'
+  const dir = language === 'ar' ? 'rtl' : 'ltr'
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+    <div dir={dir} className="min-h-screen flex flex-col items-center justify-center p-6">
       {loading && (
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-4 border-white border-t-transparent animate-spin" />
@@ -55,20 +61,20 @@ export default function ControllerPage() {
           case 'screensaver':
             return <IdleScreen session={session} />
           case 'language_select':
-            return <LanguageSelectScreen session={session} />
+            return <LanguageSelectScreen session={session} language={language} />
           case 'avatar_select':
-            return <AvatarSelectScreen session={session} />
+            return <AvatarSelectScreen session={session} language={language} />
           case 'name_entry':
-            return <NameEntryScreen session={session} />
+            return <NameEntryScreen session={session} language={language} />
           case 'track_select':
-            return <TrackSelectScreen session={session} />
+            return <TrackSelectScreen session={session} language={language} />
           case 'question_active':
           case 'answer_submitted':
-            return <QuizScreen session={session} />
+            return <QuizScreen session={session} language={language} />
           case 'question_result':
-            return <QuestionResultScreen session={session} />
+            return <QuestionResultScreen session={session} language={language} />
           case 'final_result':
-            return <FinalResultScreen session={session} />
+            return <FinalResultScreen session={session} language={language} />
           default:
             return null
         }

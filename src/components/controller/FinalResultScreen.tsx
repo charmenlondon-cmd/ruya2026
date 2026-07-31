@@ -4,15 +4,18 @@ import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { updateSession } from '@/lib/session'
 import { createHire } from '@/lib/hires'
-import type { Session } from '@/types/database'
+import { t } from '@/lib/i18n'
+import type { Language, Session } from '@/types/database'
 
 interface Props {
   session: Session
+  language: Language
 }
 
-export function FinalResultScreen({ session }: Props) {
+export function FinalResultScreen({ session, language }: Props) {
   const hireCreatedRef = useRef(false)
   const isHired = session.score >= 7
+  const strings = t(language)
 
   // Write hire record once on mount for passing scores
   useEffect(() => {
@@ -61,26 +64,26 @@ export function FinalResultScreen({ session }: Props) {
             isHired ? 'text-green-500' : 'text-aaah-dark-teal'
           }`}
         >
-          {session.score} / 10
+          {strings.finalScore(session.score)}
         </p>
 
         {/* Outcome */}
         {isHired ? (
           <>
             <h2 className="text-3xl font-bold text-green-600">
-              You&apos;re Hired! 🎉
+              {strings.youreHired}
             </h2>
             <p className="text-aaah-dark-teal text-lg text-center">
-              Congratulations! You&apos;re the perfect fit for AAAH.
+              {strings.hiredMessage}
             </p>
           </>
         ) : (
           <>
             <h2 className="text-3xl font-bold text-aaah-dark-teal">
-              We&apos;ll Get Back to You
+              {strings.wellGetBack}
             </h2>
             <p className="text-aaah-dark-teal text-lg text-center">
-              Great effort! Keep developing your skills.
+              {strings.getBackMessage}
             </p>
           </>
         )}
@@ -91,7 +94,7 @@ export function FinalResultScreen({ session }: Props) {
         onClick={handlePlayAgain}
         className="bg-white text-aaah-dark-teal font-semibold rounded-2xl px-10 py-5 text-lg hover:bg-white/90 active:scale-95 transition-all min-h-16"
       >
-        Play Again
+        {strings.playAgain}
       </button>
     </div>
   )
