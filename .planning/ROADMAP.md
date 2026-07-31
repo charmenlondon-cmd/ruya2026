@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Realtime Game Engine** - Session state machine, Supabase Realtime channel, controller↔display sync
 - [x] **Phase 3: Question Engine** - Load questions from Supabase, CSV seed script, image-answer support
 - [x] **Phase 4: Controller UI** - iPad: language/avatar/name/track selection + quiz A/B/C buttons + RTL
-- [ ] **Phase 5: Display Screen** - Question display, player info, results screen, screensaver mode
+- [x] **Phase 5: Display Screen** - Question display, player info, results screen, screensaver mode
 - [ ] **Phase 6: Hired Network** - D3/Canvas animated "hired" visualization growing through the day
 - [ ] **Phase 7: Admin Panel & Deploy** - /admin controls, session management, Vercel deployment
 
@@ -112,6 +112,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Realtime Game Engine | 2/2 | Complete | 2026-07-06 |
 | 3. Question Engine | 2/2 | Complete | 2026-07-06 |
 | 4. Controller UI | 3/3 | Complete | 2026-07-31 |
-| 5. Display Screen | 0/3 | Not started | - |
+| 5. Display Screen | 3/3 | Complete | 2026-07-31 |
 | 6. Hired Network | 0/2 | Not started | - |
 | 7. Admin Panel & Deploy | 0/2 | Not started | - |
