@@ -3,6 +3,7 @@
 import { useSession } from '@/hooks/useSession'
 import { WaitingScreen } from '@/components/display/WaitingScreen'
 import { QuestionScreen } from '@/components/display/QuestionScreen'
+import { FinalResultScreen } from '@/components/display/FinalResultScreen'
 import type { Language } from '@/types/database'
 
 export default function DisplayPage() {
@@ -41,11 +42,7 @@ export default function DisplayPage() {
             return <QuestionScreen session={session} language={language} />
 
           case 'final_result':
-            return (
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <p className="text-white text-5xl font-bold">The results are in…</p>
-              </div>
-            )
+            return <FinalResultScreen session={session} language={language} />
 
           case 'idle':
           case 'screensaver':
