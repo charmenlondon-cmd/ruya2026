@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 4 of 7 (Controller UI)
-Plan: 2 of 3 in current phase — complete
-Status: Plan 04-02 complete — full gameplay loop built (quiz, result screens, hire logic)
-Last activity: 2026-07-31 — Plan 04-02 executed; QuizScreen, QuestionResultScreen, FinalResultScreen built; createHire() writes to hires table
+Plan: 3 of 3 in current phase — paused at human-verify checkpoint
+Status: Plan 04-03 Task 1 complete (adc4b02) — Arabic RTL wired; awaiting human verification of Arabic flow
+Last activity: 2026-07-31 — i18n.ts created; all 7 screens updated with language prop and bilingual strings; dir="rtl" wired to controller page wrapper
 
-Progress: ████████░░ 80%
+Progress: █████████░ 90%
 
 ## Performance Metrics
 
@@ -64,6 +64,9 @@ Recent decisions affecting current work:
 - **Image answers are EN-only in Supabase** — Arabic counterparts of the 4 image questions (Architecture & Design Q6, Legal & Compliance Q6, Marketing Q9, Operations & Supply Chain Q4) store Arabic text descriptions in answer_X_text; answer_X_image_url is null for AR rows.
 - **Supabase Storage bucket "question-images" is public** — Images served via CDN URLs with no auth. Safe for event-day use.
 - **Seed script is idempotent** — Delete-all before insert + upsert on image upload; safe to re-run if data needs refreshing.
+- **i18n via t(language) typed string map** — No external library; t(language).key pattern is compile-time safe, tree-shakeable, and keeps components pure/testable. Established in 04-03.
+- **dir applied once to controller page wrapper** — Single HTML attribute cascades RTL to all child components automatically; no per-component direction handling needed. Established in 04-03.
+- **LanguageSelectScreen buttons stay bilingual by design** — "English" and "العربية" labels are hardcoded, not localised — they are the selector itself and must always show both languages regardless of current session language. Established in 04-03.
 
 ### Deferred Issues
 
@@ -76,8 +79,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: Phase 4, Plan 02 complete. Full gameplay loop built: QuizScreen (questions + A/B/C buttons), QuestionResultScreen (feedback + running score), FinalResultScreen (final score + hired outcome + play again). TypeScript clean, build passes.
+Stopped at: Phase 4, Plan 03, Task 2 (human-verify checkpoint). Task 1 complete (adc4b02): i18n.ts created, all 7 controller screens bilingual, dir="rtl" wired. Awaiting human verification of Arabic flow in browser.
 
 ### Resume steps
 
-Execute plan 04-03 to add Arabic RTL layout across all controller screens.
+After user approves Arabic flow: plan 04-03 is complete, phase 04 is complete. Execute phase 05 (Display Screen).
