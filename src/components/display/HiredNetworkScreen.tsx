@@ -1,6 +1,5 @@
 'use client'
 
-import type { CSSProperties } from 'react'
 import type { Hire } from '@/types/database'
 
 const TRACK_COLOR: Record<string, string> = {
@@ -16,12 +15,12 @@ const TRACK_COLOR: Record<string, string> = {
   'Sales & Business Development': '#86efac',
 }
 
-function seedFromId(id: string): number {
-  let h = 0
+function seed(id: string, n: number): number {
+  let h = n * 2654435761
   for (let i = 0; i < id.length; i++) {
-    h = (Math.imul(31, h) + id.charCodeAt(i)) | 0
+    h = (Math.imul(h ^ id.charCodeAt(i), 2246822519)) | 0
   }
-  return Math.abs(h) / 2147483647
+  return (Math.abs(h) >>> 0) / 4294967295
 }
 
 interface Props {
@@ -29,108 +28,98 @@ interface Props {
 }
 
 export default function HiredNetworkScreen({ hires }: Props) {
+  const keyframes = hires.map((hire) => {
+    const sid = hire.id.replace(/-/g, '_')
+    // Each waypoint: random direction, large travel — ±45vw horizontal, ±40vh vertical
+    const tx = (n: number) => `${((seed(hire.id, n) - 0.5) * 90).toFixed(1)}vw`
+    const ty = (n: number) => `${((seed(hire.id, n + 10) - 0.5) * 80).toFixed(1)}vh`
+    return `
+      @keyframes drift_${sid} {
+        0%   { transform: translate(0,       0); }
+        16%  { transform: translate(${tx(1)}, ${ty(1)}); }
+        33%  { transform: translate(${tx(2)}, ${ty(2)}); }
+        50%  { transform: translate(${tx(3)}, ${ty(3)}); }
+        66%  { transform: translate(${tx(4)}, ${ty(4)}); }
+        83%  { transform: translate(${tx(5)}, ${ty(5)}); }
+        100% { transform: translate(0,       0); }
+      }`
+  }).join('\n')
+
   return (
     <div style={{ position: 'relative', flex: 1, background: '#020617', overflow: 'hidden' }}>
       <style>{`
-        @keyframes drift {
-          0%   { transform: translate(calc(-50% + 0px),         calc(-50% + 0px)); }
-          25%  { transform: translate(calc(-50% + var(--tx1)), calc(-50% + var(--ty1))); }
-          50%  { transform: translate(calc(-50% + var(--tx2)), calc(-50% + var(--ty2))); }
-          75%  { transform: translate(calc(-50% + var(--tx3)), calc(-50% + var(--ty3))); }
-          100% { transform: translate(calc(-50% + 0px),         calc(-50% + 0px)); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
+        ${keyframes}
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
 
-      {/* AAAH logo centred, subtle */}
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.12, zIndex: 0, pointerEvents: 'none' }}>
+      {/* AAAH logo — centred, faint backdrop */}
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: 0.12, pointerEvents: 'none' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logos/aaah-logo-white.png"
-          alt=""
-          style={{ width: 160 }}
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-        />
+        <img src="/logos/aaah-logo-white.png" alt="" style={{ width: 160 }}
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
       </div>
 
-      {/* Empty state */}
       {hires.length === 0 && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', color: '#475569' }}>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', textAlign: 'center', color: '#475569' }}>
           <p style={{ fontSize: 18 }}>No hires yet today</p>
         </div>
       )}
 
-      {/* Hire nodes */}
       {hires.map((hire) => {
-        const r1 = seedFromId(hire.id)
-        const r2 = seedFromId(hire.id + '_y')
-        const r3 = seedFromId(hire.id + '_x2')
-        const r4 = seedFromId(hire.id + '_y2')
-        const r5 = seedFromId(hire.id + '_x3')
-        const r6 = seedFromId(hire.id + '_y3')
+        const sid = hire.id.replace(/-/g, '_')
+        const r1 = seed(hire.id, 0)
+        const r2 = seed(hire.id, 20)
 
-        // Starting anchor spread across the screen
+        // Anchor: spread across screen, kept away from edges so cards start visible
         const left = 15 + r1 * 70
-        const top = 15 + r2 * 70
+        const top  = 15 + r2 * 70
 
-        // Drift waypoints: ±25vw horizontally, ±20vh vertically — crosses most of the screen
-        const tx1 = `${(r3 - 0.5) * 50}vw`
-        const ty1 = `${(r4 - 0.5) * 40}vh`
-        const tx2 = `${(r5 - 0.5) * 50}vw`
-        const ty2 = `${(r6 - 0.5) * 40}vh`
-        const tx3 = `${(r1 - 0.5) * 50}vw`
-        const ty3 = `${(r2 - 0.5) * 40}vh`
-
-        // 45–75s per cycle; negative delay so all cards are already moving on mount
-        const animDuration = `${45 + r1 * 30}s`
-        const animDelay = `${-r2 * 60}s`
-
-        const style = {
-          position: 'absolute',
-          left: `${left}%`,
-          top: `${top}%`,
-          textAlign: 'center',
-          animation: `drift ${animDuration} ease-in-out infinite, fadeIn 0.8s ease-out`,
-          animationDelay: `${animDelay}, 0s`,
-          '--tx1': tx1,
-          '--ty1': ty1,
-          '--tx2': tx2,
-          '--ty2': ty2,
-          '--tx3': tx3,
-          '--ty3': ty3,
-        } as CSSProperties & Record<string, string>
+        // Slow enough to feel dreamy; negative delay = already in motion on mount
+        const dur   = (45 + r1 * 35).toFixed(0)
+        const delay = (-(r2 * 70)).toFixed(0)
 
         return (
-          <div key={hire.id} style={style}>
-            {/* Avatar circle */}
+          // Outer div: absolute anchor + centering — static transform, no animation conflict
+          <div
+            key={hire.id}
+            style={{
+              position: 'absolute',
+              left: `${left}%`,
+              top: `${top}%`,
+              transform: 'translate(-50%, -50%)',
+              animation: 'fadeIn 0.8s ease-out',
+            }}
+          >
+            {/* Inner div: drift animation only — transform is entirely the animation's domain */}
             <div style={{
-              width: 72,
-              height: 72,
-              borderRadius: '50%',
-              border: `3px solid ${TRACK_COLOR[hire.track] ?? '#ffffff'}`,
-              overflow: 'hidden',
-              margin: '0 auto 6px',
-              background: TRACK_COLOR[hire.track] ?? '#334155',
+              textAlign: 'center',
+              animation: `drift_${sid} ${dur}s ease-in-out infinite`,
+              animationDelay: `${delay}s`,
             }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`/avatars/${hire.avatar_id}.png`}
-                alt={hire.player_name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-              />
+              <div style={{
+                width: 72,
+                height: 72,
+                borderRadius: '50%',
+                border: `3px solid ${TRACK_COLOR[hire.track] ?? '#ffffff'}`,
+                overflow: 'hidden',
+                margin: '0 auto 6px',
+                background: TRACK_COLOR[hire.track] ?? '#334155',
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/avatars/${hire.avatar_id}.png`}
+                  alt={hire.player_name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+              </div>
+              <p style={{ color: '#ffffff', fontSize: 13, fontWeight: 600, margin: '0 0 2px', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+                {hire.player_name}
+              </p>
+              <p style={{ color: TRACK_COLOR[hire.track] ?? '#94a3b8', fontSize: 11, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+                {hire.track}
+              </p>
             </div>
-            {/* Name */}
-            <p style={{ color: '#ffffff', fontSize: 13, fontWeight: 600, margin: '0 0 2px', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
-              {hire.player_name}
-            </p>
-            {/* Track */}
-            <p style={{ color: TRACK_COLOR[hire.track] ?? '#94a3b8', fontSize: 11, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
-              {hire.track}
-            </p>
           </div>
         )
       })}
