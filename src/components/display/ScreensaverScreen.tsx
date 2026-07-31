@@ -1,15 +1,19 @@
 'use client'
 
 import Image from 'next/image'
+import { useHires } from '@/hooks/useHires'
+import { HiredNetworkCanvas } from '@/components/display/HiredNetworkCanvas'
 
 /**
  * ScreensaverScreen — baseline idle state shown when no game is active.
  *
- * Phase 6 note: The hired-network visualization (D3/Canvas) will be rendered
- * as an absolutely-positioned layer behind this content. Content layer is at
- * z-10, background glow at z-0, so the network layer can slot in at z-5.
+ * Phase 6: The hired-network visualization (D3/Canvas) is rendered as an
+ * absolutely-positioned layer at z-5, between the background glow (z-0)
+ * and the content (z-10).
  */
 export function ScreensaverScreen() {
+  const hires = useHires()
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-8 relative overflow-hidden">
       <style>{`
@@ -18,6 +22,9 @@ export function ScreensaverScreen() {
           50% { transform: translateY(-16px); }
         }
       `}</style>
+
+      {/* Hired network canvas layer — z-5, between glow and content */}
+      <HiredNetworkCanvas hires={hires} />
 
       {/* Background radial glow behind the logo — z-0 */}
       <div
