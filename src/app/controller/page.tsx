@@ -8,6 +8,8 @@ import { AvatarSelectScreen } from '@/components/controller/AvatarSelectScreen'
 import { NameEntryScreen } from '@/components/controller/NameEntryScreen'
 import { TrackSelectScreen } from '@/components/controller/TrackSelectScreen'
 import { QuizScreen } from '@/components/controller/QuizScreen'
+import { QuestionResultScreen } from '@/components/controller/QuestionResultScreen'
+import { FinalResultScreen } from '@/components/controller/FinalResultScreen'
 import type { Session } from '@/types/database'
 
 function IdleScreen({ session }: { session: Session }) {
@@ -64,12 +66,9 @@ export default function ControllerPage() {
           case 'answer_submitted':
             return <QuizScreen session={session} />
           case 'question_result':
+            return <QuestionResultScreen session={session} />
           case 'final_result':
-            return (
-              <div className="text-white text-xl p-8">
-                Result screens coming in Plan 04-02 Task 2
-              </div>
-            )
+            return <FinalResultScreen session={session} />
           default:
             return null
         }
