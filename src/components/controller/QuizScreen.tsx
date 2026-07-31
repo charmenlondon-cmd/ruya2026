@@ -125,7 +125,7 @@ export function QuizScreen({ session, language }: Props) {
               disabled={answered}
               className="bg-white/90 text-aaah-dark-teal rounded-2xl p-4 w-full text-left font-semibold hover:bg-white active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center"
             >
-              <span className="inline-flex justify-center items-center w-8 h-8 rounded-full bg-aaah-dark-teal text-white font-bold mr-3 flex-shrink-0">
+              <span className="inline-flex justify-center items-center w-8 h-8 rounded-full bg-aaah-dark-teal text-white font-bold me-3 flex-shrink-0">
                 {key}
               </span>
               {imageUrl ? (

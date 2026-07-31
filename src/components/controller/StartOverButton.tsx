@@ -35,7 +35,7 @@ export function StartOverButton({ session, language }: Props) {
   return (
     <button
       onClick={handleStartOver}
-      className="absolute top-4 right-4 text-white/50 text-sm font-medium hover:text-white/80 active:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/10 active:bg-white/20"
+      className="fixed top-4 right-4 text-white/50 text-sm font-medium hover:text-white/80 active:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/10 active:bg-white/20 z-50"
     >
       {strings.startOver}
     </button>
