@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-07-03)
 
 **Core value:** Stunning display + reliable realtime sync + animated hired network + smooth bilingual player experience
-**Current focus:** Phase 4 — Controller UI
+**Current focus:** Phase 5 — Display Screen
 
 ## Current Position
 
-Phase: 4 of 7 (Controller UI)
-Plan: 3 of 3 in current phase — paused at human-verify checkpoint
-Status: Plan 04-03 Task 1 complete (adc4b02) — Arabic RTL wired; awaiting human verification of Arabic flow
-Last activity: 2026-07-31 — i18n.ts created; all 7 screens updated with language prop and bilingual strings; dir="rtl" wired to controller page wrapper
+Phase: 5 of 7 (Display Screen)
+Plan: 0 of ? in current phase — ready to plan
+Status: Phase 04 complete — all 3 plans done, TypeScript clean, build passes
+Last activity: 2026-07-31 — Phase 04 wrapped: bilingual i18n, RTL layout, Start Over button on all screens
 
-Progress: █████████░ 90%
+Progress: ██████████ ~57%
 
 ## Performance Metrics
 
@@ -30,7 +30,7 @@ Progress: █████████░ 90%
 | 01-foundation | 3/3 | 52 min | 17 min |
 | 02-realtime-game-engine | 2/2 | 50 min | 25 min |
 | 03-question-engine | 2/2 | ~25 min | ~12 min |
-| 04-controller-ui | 2/3 | ~35 min | ~17 min |
+| 04-controller-ui | 3/3 | ~60 min | ~20 min |
 
 **Recent Trend:**
 - Last 5 plans: 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min), 03-01 (seed), 04-01 (~15 min)
@@ -66,6 +66,7 @@ Recent decisions affecting current work:
 - **Seed script is idempotent** — Delete-all before insert + upsert on image upload; safe to re-run if data needs refreshing.
 - **i18n via t(language) typed string map** — No external library; t(language).key pattern is compile-time safe, tree-shakeable, and keeps components pure/testable. Established in 04-03.
 - **dir applied once to controller page wrapper** — Single HTML attribute cascades RTL to all child components automatically; no per-component direction handling needed. Established in 04-03.
+- **StartOverButton shared component, not inlined** — Full reset payload lives in one place; all 7 screens import the component and pass session + language. Ghost button positioned absolute top-right inside a relative wrapper. Established in 04-03.
 - **LanguageSelectScreen buttons stay bilingual by design** — "English" and "العربية" labels are hardcoded, not localised — they are the selector itself and must always show both languages regardless of current session language. Established in 04-03.
 
 ### Deferred Issues
@@ -79,8 +80,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: Phase 4, Plan 03, Task 2 (human-verify checkpoint). Task 1 complete (adc4b02): i18n.ts created, all 7 controller screens bilingual, dir="rtl" wired. Awaiting human verification of Arabic flow in browser.
+Stopped at: Phase 4 complete. All 3 plans done. Phase 05 (Display Screen) is next.
 
 ### Resume steps
 
-After user approves Arabic flow: plan 04-03 is complete, phase 04 is complete. Execute phase 05 (Display Screen).
+Plan phase 05 (Display Screen) — run gsd:plan-phase or gsd:execute-phase for phase 05.
