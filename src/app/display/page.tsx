@@ -4,6 +4,7 @@ import { useSession } from '@/hooks/useSession'
 import { WaitingScreen } from '@/components/display/WaitingScreen'
 import { QuestionScreen } from '@/components/display/QuestionScreen'
 import { FinalResultScreen } from '@/components/display/FinalResultScreen'
+import { ScreensaverScreen } from '@/components/display/ScreensaverScreen'
 import type { Language } from '@/types/database'
 
 export default function DisplayPage() {
@@ -47,12 +48,7 @@ export default function DisplayPage() {
           case 'idle':
           case 'screensaver':
           default:
-            return (
-              <div className="flex-1 flex flex-col items-center justify-center gap-6">
-                <h1 className="text-white text-6xl font-bold">Ruya Careers Fair 2026</h1>
-                <p className="text-aaah-light-teal text-2xl">Pick up the iPad to start playing!</p>
-              </div>
-            )
+            return <ScreensaverScreen />
         }
       })()}
     </div>
