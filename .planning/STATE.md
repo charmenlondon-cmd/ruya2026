@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 5 of 7 (Display Screen)
-Plan: 2 of ? in current phase — 05-02 complete
-Status: 05-02 done — FinalResultScreen component + wired into display page, TypeScript clean, build passes
-Last activity: 2026-07-31 — 05-02: TV-scale FinalResultScreen with hired (green, pulsing ring) and not-hired (teal, dignified) outcomes
+Plan: 3 of 3 in current phase — 05-03 Task 1 complete, Task 2 awaiting human verification
+Status: CHECKPOINT — human-verify gate blocking. All 4 display screens built; QA verification required before Phase 5 closes
+Last activity: 2026-07-31 — 05-03: ScreensaverScreen (animated float, AAAH branding, z-layer for Phase 6 network)
 
-Progress: ████████████ ~64%
+Progress: ████████████ ~68%
 
 ## Performance Metrics
 
@@ -73,6 +73,8 @@ Recent decisions affecting current work:
 - **Display page idle/screensaver placeholder is hardcoded English** — Inline placeholder only; will be replaced in 05-03 (screensaver plan) with the full bilingual screensaver. Established in 05-01.
 - **Display FinalResultScreen: track null-guarded** — `session.track` is `Track | null`; the track line only renders when track is non-null to avoid a bad `trackName(null)` call. Established in 05-02.
 - **FinalResultScreen pulsing ring inside relative wrapper** — `animate-ping` ring is absolutely positioned inside a `relative` div wrapping the avatar Image; this ties ring dimensions to avatar without affecting surrounding flex layout. Established in 05-02.
+- **ScreensaverScreen float via inline `<style>` keyframe** — CSS-only, no Framer Motion; Tailwind v4 arbitrary keyframe syntax is verbose; inline style tag is simpler. Phase 6 adds D3/Canvas. Established in 05-03.
+- **ScreensaverScreen z-layer: glow z-0, content z-10** — Phase 6 hired-network D3/Canvas overlay slots in at z-5 between glow and content; no refactor needed. Established in 05-03.
 
 ### Deferred Issues
 
@@ -85,8 +87,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: Phase 5, plan 05-02 complete. FinalResultScreen built and wired into display page.
+Stopped at: Phase 5, plan 05-03 Task 2 checkpoint. ScreensaverScreen built and wired. Awaiting human QA of all 4 display screens.
 
 ### Resume steps
 
-Execute plan 05-03 (next display screen plan) — screensaver/idle screen replacing the current inline placeholder.
+After user responds "approved" to the checkpoint: close Phase 05, update STATE.md to Phase 6, execute Phase 06 (Hired Network).
