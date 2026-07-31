@@ -28,7 +28,7 @@ export default function DisplayPage() {
   const dir = language === 'ar' ? 'rtl' : 'ltr'
 
   return (
-    <div dir={dir} className="min-h-[calc(100vh-56px)] flex flex-col">
+    <div dir={dir} className="h-screen flex flex-col">
       {loading && (
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin border-4 border-white border-t-transparent rounded-full w-16 h-16" />
