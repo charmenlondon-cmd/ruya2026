@@ -23,6 +23,7 @@ const strings = {
     startOver: 'Start Over',
     tapToStart: 'Tap to Start',
     start: 'Start',
+    playerJoining: 'A player is joining…',
     trackName: (track: Track) => track as string,
   },
   ar: {
@@ -47,6 +48,7 @@ const strings = {
     startOver: 'البداية',
     tapToStart: 'ابدأ',
     start: 'ابدأ',
+    playerJoining: '…لاعب ينضم',
     trackName: (track: Track): string =>
       (({
         'Engineering': 'الهندسة',
