@@ -1,14 +1,28 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useSession } from '@/hooks/useSession'
+import { useHires } from '@/hooks/useHires'
 import { WaitingScreen } from '@/components/display/WaitingScreen'
 import { QuestionScreen } from '@/components/display/QuestionScreen'
 import { FinalResultScreen } from '@/components/display/FinalResultScreen'
 import { ScreensaverScreen } from '@/components/display/ScreensaverScreen'
+import HiredNetworkScreen from '@/components/display/HiredNetworkScreen'
 import type { Language } from '@/types/database'
 
 export default function DisplayPage() {
   const { session, loading, error } = useSession()
+  const hires = useHires()
+  const [showHiredNetwork, setShowHiredNetwork] = useState(false)
+
+  useEffect(() => {
+    if (!session || session.state === 'idle' || session.state === 'screensaver') {
+      const timer = setTimeout(() => setShowHiredNetwork(true), 60_000)
+      return () => clearTimeout(timer)
+    } else {
+      setShowHiredNetwork(false)
+    }
+  }, [session?.state])
 
   const language: Language = session?.language ?? 'en'
   const dir = language === 'ar' ? 'rtl' : 'ltr'
@@ -48,7 +62,9 @@ export default function DisplayPage() {
           case 'idle':
           case 'screensaver':
           default:
-            return <ScreensaverScreen />
+            return showHiredNetwork
+              ? <HiredNetworkScreen hires={hires} />
+              : <ScreensaverScreen />
         }
       })()}
     </div>
