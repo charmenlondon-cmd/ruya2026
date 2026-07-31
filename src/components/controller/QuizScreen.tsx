@@ -83,18 +83,25 @@ export function QuizScreen({ session, language }: Props) {
     const isLast = localIndex >= 9
     const nextIndex = isLast ? localIndex : localIndex + 1
 
-    // Advance locally after 150ms (brief visual tap feedback) — no Realtime wait needed
+    // Controller advances locally after 150ms for instant tap feedback
     setTimeout(() => {
       if (!isLast) setLocalIndex(nextIndex)
     }, 150)
 
-    // Single write: score + next question + final state all at once
+    // Write 1: mark answer_submitted so display can briefly highlight the selection
     updateSession(session.id, {
       last_answer: answer,
       last_answer_correct: isCorrect,
       score: newScore,
-      current_question: nextIndex,
-      state: isLast ? 'final_result' : 'question_active',
+      state: 'answer_submitted',
+    }).then(() => {
+      // Write 2: advance display to next question after 1200ms
+      setTimeout(() => {
+        updateSession(session.id, {
+          current_question: nextIndex,
+          state: isLast ? 'final_result' : 'question_active',
+        }).catch(console.error)
+      }, 1200)
     }).catch(console.error)
   }
 
