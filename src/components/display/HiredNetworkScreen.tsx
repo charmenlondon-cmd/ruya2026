@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import type { Hire } from '@/types/database'
 
 const TRACK_COLOR: Record<string, string> = {
@@ -23,106 +24,125 @@ function seed(id: string, n: number): number {
   return (Math.abs(h) >>> 0) / 4294967295
 }
 
+interface CardProps {
+  hire: Hire
+  containerRef: React.RefObject<HTMLDivElement | null>
+}
+
+function HireCard({ hire, containerRef }: CardProps) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const r = (n: number) => seed(hire.id, n)
+
+    // Two sine waves with different, irrational-ratio periods → complex Lissajous path
+    // that covers the full container width and height over time
+    const periodX = 70 * (1 + r(0) * 0.8)         // 70–126 s per x-cycle
+    const periodY = 70 * (1 + r(1) * 0.8) * 1.27  // 89–160 s per y-cycle
+    const phaseX  = r(2) * Math.PI * 2
+    const phaseY  = r(3) * Math.PI * 2
+    // Negative time offset so all cards are already mid-path on mount
+    const timeOffset = -(r(4) * 600_000)  // up to 10 min back
+
+    let animId: number
+
+    const tick = (now: number) => {
+      const container = containerRef.current
+      if (!container || !el) { animId = requestAnimationFrame(tick); return }
+
+      const W  = container.offsetWidth
+      const H  = container.offsetHeight
+      const cx = W / 2
+      const cy = H / 2
+
+      // Amplitude: card centre travels to within ~6% of each edge
+      const ax = cx * 0.88
+      const ay = cy * 0.88
+
+      const t = (now + timeOffset) / 1000  // seconds
+      const x = cx + ax * Math.sin((2 * Math.PI / periodX) * t + phaseX)
+      const y = cy + ay * Math.sin((2 * Math.PI / periodY) * t + phaseY)
+
+      // Set left/top directly — transform stays as centering offset only
+      el.style.left = `${x}px`
+      el.style.top  = `${y}px`
+
+      animId = requestAnimationFrame(tick)
+    }
+
+    animId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(animId)
+  }, [hire.id, containerRef])
+
+  const color = TRACK_COLOR[hire.track] ?? '#ffffff'
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        position: 'absolute',
+        transform: 'translate(-50%, -50%)',
+        textAlign: 'center',
+      }}
+    >
+      <div style={{
+        width: 72,
+        height: 72,
+        borderRadius: '50%',
+        border: `3px solid ${color}`,
+        overflow: 'hidden',
+        margin: '0 auto 6px',
+        background: color,
+      }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`/avatars/${hire.avatar_id}.png`}
+          alt={hire.player_name}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+        />
+      </div>
+      <p style={{ color: '#ffffff', fontSize: 13, fontWeight: 600, margin: '0 0 2px', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+        {hire.player_name}
+      </p>
+      <p style={{ color, fontSize: 11, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+        {hire.track}
+      </p>
+    </div>
+  )
+}
+
 interface Props {
   hires: Hire[]
 }
 
 export default function HiredNetworkScreen({ hires }: Props) {
-  const keyframes = hires.map((hire) => {
-    const sid = hire.id.replace(/-/g, '_')
-    // Each waypoint: random direction, large travel — ±45vw horizontal, ±40vh vertical
-    const tx = (n: number) => `${((seed(hire.id, n) - 0.5) * 90).toFixed(1)}vw`
-    const ty = (n: number) => `${((seed(hire.id, n + 10) - 0.5) * 80).toFixed(1)}vh`
-    return `
-      @keyframes drift_${sid} {
-        0%   { transform: translate(0,       0); }
-        16%  { transform: translate(${tx(1)}, ${ty(1)}); }
-        33%  { transform: translate(${tx(2)}, ${ty(2)}); }
-        50%  { transform: translate(${tx(3)}, ${ty(3)}); }
-        66%  { transform: translate(${tx(4)}, ${ty(4)}); }
-        83%  { transform: translate(${tx(5)}, ${ty(5)}); }
-        100% { transform: translate(0,       0); }
-      }`
-  }).join('\n')
+  const containerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div style={{ position: 'relative', flex: 1, background: '#020617', overflow: 'hidden' }}>
-      <style>{`
-        ${keyframes}
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-      `}</style>
-
-      {/* AAAH logo — centred, faint backdrop */}
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: 0.12, pointerEvents: 'none' }}>
+    <div
+      ref={containerRef}
+      style={{ position: 'relative', flex: 1, background: '#020617', overflow: 'hidden' }}
+    >
+      {/* Faint AAAH logo at centre */}
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.12, pointerEvents: 'none' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logos/aaah-logo-white.png" alt="" style={{ width: 160 }}
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
       </div>
 
       {hires.length === 0 && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', textAlign: 'center', color: '#475569' }}>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', color: '#475569' }}>
           <p style={{ fontSize: 18 }}>No hires yet today</p>
         </div>
       )}
 
-      {hires.map((hire) => {
-        const sid = hire.id.replace(/-/g, '_')
-        const r1 = seed(hire.id, 0)
-        const r2 = seed(hire.id, 20)
-
-        // Anchor: spread across screen, kept away from edges so cards start visible
-        const left = 15 + r1 * 70
-        const top  = 15 + r2 * 70
-
-        // Slow enough to feel dreamy; negative delay = already in motion on mount
-        const dur   = (45 + r1 * 35).toFixed(0)
-        const delay = (-(r2 * 70)).toFixed(0)
-
-        return (
-          // Outer div: absolute anchor + centering — static transform, no animation conflict
-          <div
-            key={hire.id}
-            style={{
-              position: 'absolute',
-              left: `${left}%`,
-              top: `${top}%`,
-              transform: 'translate(-50%, -50%)',
-              animation: 'fadeIn 0.8s ease-out',
-            }}
-          >
-            {/* Inner div: drift animation only — transform is entirely the animation's domain */}
-            <div style={{
-              textAlign: 'center',
-              animation: `drift_${sid} ${dur}s ease-in-out infinite`,
-              animationDelay: `${delay}s`,
-            }}>
-              <div style={{
-                width: 72,
-                height: 72,
-                borderRadius: '50%',
-                border: `3px solid ${TRACK_COLOR[hire.track] ?? '#ffffff'}`,
-                overflow: 'hidden',
-                margin: '0 auto 6px',
-                background: TRACK_COLOR[hire.track] ?? '#334155',
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`/avatars/${hire.avatar_id}.png`}
-                  alt={hire.player_name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                />
-              </div>
-              <p style={{ color: '#ffffff', fontSize: 13, fontWeight: 600, margin: '0 0 2px', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
-                {hire.player_name}
-              </p>
-              <p style={{ color: TRACK_COLOR[hire.track] ?? '#94a3b8', fontSize: 11, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
-                {hire.track}
-              </p>
-            </div>
-          </div>
-        )
-      })}
+      {hires.map((hire) => (
+        <HireCard key={hire.id} hire={hire} containerRef={containerRef} />
+      ))}
     </div>
   )
 }
