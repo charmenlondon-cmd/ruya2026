@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 6 of 7 (Hired Network)
-Plan: 1 of ? in current phase — COMPLETE (CSS constellation approach, human checkpoint pending)
-Status: CHECKPOINT — 06-01 complete with CSS constellation approach. D3 removed; HiredNetworkScreen built as pure CSS floating cards with seeded stable positions. 60s inactivity timer in display/page.tsx switches screensaver to hired network. Awaiting human visual QA.
-Last activity: 2026-07-31 — 06-01: D3 scrapped, CSS constellation HiredNetworkScreen built, 1-minute timer added; paused at checkpoint:human-verify
+Plan: 1 of 2 in current phase — IN PROGRESS (visual QA: "looking better, not perfect"; stopped for the day)
+Status: PAUSED — 06-01 code complete and building clean. HiredNetworkScreen uses JS requestAnimationFrame Lissajous paths. Animation acceptable; user happy enough to stop. 06-02 not started.
+Last activity: 2026-07-31 — 06-01: extensive animation iteration (D3 → CSS keyframes × 3 → JS rAF Lissajous); route group experiment tried and reverted; header restored to root layout
 
 Progress: █████████████████ ~80%
 
@@ -75,12 +75,12 @@ Recent decisions affecting current work:
 - **FinalResultScreen pulsing ring inside relative wrapper** — `animate-ping` ring is absolutely positioned inside a `relative` div wrapping the avatar Image; this ties ring dimensions to avatar without affecting surrounding flex layout. Established in 05-02.
 - **ScreensaverScreen float via inline `<style>` keyframe** — CSS-only, no Framer Motion; Tailwind v4 arbitrary keyframe syntax is verbose; inline style tag is simpler. Established in 05-03.
 - **ScreensaverScreen z-layer: glow z-0, content z-10** — No D3 canvas layer needed; HiredNetworkScreen is a separate full-screen component rendered instead of ScreensaverScreen. Established in 05-03 (revised 06-01).
-- **HiredNetworkScreen: CSS constellation not D3** — D3 force simulation produced random bobbing; pure CSS @keyframes float with seeded stable positions gives a clean constellation. Established in 06-01.
-- **seedFromId() hash for stable node positions** — Deterministic position derived from hire.id; no Math.random() so positions don't jump on re-render. Established in 06-01.
-- **Negative animationDelay on float** — All nodes appear already mid-motion on mount; avoids all-nodes-start-simultaneously effect. Established in 06-01.
+- **HiredNetworkScreen: JS requestAnimationFrame not CSS/D3** — D3 force simulation and multiple CSS keyframe approaches all failed; JS rAF with Lissajous sine paths is the definitive approach. Established in 06-01.
+- **Lissajous paths for hired network** — Two sine waves (X/Y) with irrational-ratio periods give complex coverage of full container. `container.offsetWidth/Height` read at runtime so it adapts to any screen. Established in 06-01.
+- **Two-concern separation in HireCard** — `left`/`top` set by JS loop; `transform: translate(-50%,-50%)` handles centering only and is never touched by animation. Established in 06-01.
 - **useHires called at display/page level** — Data fetched once, passed as prop to HiredNetworkScreen; avoids duplicate subscriptions across screen switches. Established in 06-01.
-- **60s timer resets on any active game state** — showHiredNetwork flips false immediately when session enters a game state; user always sees ScreensaverScreen first after game ends. Established in 06-01.
-- **useHires errors silently ignored** — Empty array is safe fallback; the hired network screen shows empty state without crashing. Established in 06-01.
+- **60s inactivity timer → HiredNetworkScreen** — showHiredNetwork fires after 60s of idle/screensaver state; resets to false immediately on any active game state. Established in 06-01.
+- **Header stays in root layout** — Display page keeps AAAH header. Route group experiment (headerless display) tried and reverted at user request. Established in 06-01.
 
 ### Deferred Issues
 
@@ -93,8 +93,10 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: 06-01 checkpoint:human-verify. CSS constellation approach complete. Awaiting user to run `npm run dev`, visit /display, wait 60s in idle/screensaver state, and confirm floating hire cards appear.
+Stopped at: 06-01 in progress. Animation working acceptably (JS Lissajous, full-screen coverage). User called it a day.
 
 ### Resume steps
 
-After human approves: proceed to 06-02 (Realtime subscription for live hire updates).
+1. Revisit HiredNetworkScreen animation if user wants further refinement (optional)
+2. Formally close 06-01 checkpoint (user approved "looking better, not perfect")
+3. Proceed to 06-02: add Realtime subscription to useHires + fade-in animation for new hire arrivals

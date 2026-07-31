@@ -1,46 +1,50 @@
-# 06-01 Summary: CSS Constellation Hired Network Visualization
+# 06-01 Summary: Hired Network Screen — JS Lissajous Constellation
 
 **Plan:** 06-01
 **Phase:** 06-hired-network
-**Status:** Complete (human checkpoint passed — approach revised to CSS constellation)
+**Status:** In progress — human visual QA: "looking better, not perfect"; stopped for the day
 **Date:** 2026-07-31
 
 ## What Was Built
 
-### Cleanup — Remove D3 approach (commit: 1c79ffe)
-- Deleted `src/components/display/HiredNetworkCanvas.tsx` (D3 force simulation)
-- Reverted `src/components/display/ScreensaverScreen.tsx` to its pre-06-01 state (no useHires, no HiredNetworkCanvas)
-- Uninstalled `d3` and `@types/d3`
-- Kept `src/hooks/useHires.ts` unchanged — still needed for the CSS approach
+### useHires hook (commit: fec97cc)
+- `src/hooks/useHires.ts` — fetches all rows from `hires` table on mount, returns `Hire[]`
 
-### Task 1 — HiredNetworkScreen CSS constellation (commit: fe8c1fe)
-- Created `src/components/display/HiredNetworkScreen.tsx`
-- Pure CSS implementation — no D3, no Canvas
-- Each hire is an absolutely-positioned div with a stable seeded position derived from `hire.id` via `seedFromId()` (deterministic hash — no `Math.random()`, no position jumping on re-render)
-- `left`: 10–90% of width; `top`: 10–90% of height
-- CSS `@keyframes float` with per-node duration (25–45s) and negative animation delay so all nodes are already mid-motion on mount — organic, non-synchronised movement
-- `@keyframes fadeIn` fades each card in from scale 0.7 on mount
-- Coloured ring border + avatar `<img>` + player name + track name per card
-- 10 track colours matching AAAH brand palette (blue, emerald, pink, orange, violet, amber, red, teal, fuchsia, light green)
-- Faint AAAH logo (`/logos/aaah-logo-white.png`) centred at 15% opacity behind nodes
-- Empty state: "No hires yet today" message if `hires.length === 0`
-- `onError` fallback on avatar img hides broken image icons gracefully
+### HiredNetworkScreen — JS animation (commit: bd34fc8, final)
+- `src/components/display/HiredNetworkScreen.tsx`
+- Each hire renders as a `HireCard`: avatar circle + name + track stacked, track-coloured ring border
+- **Animation:** `requestAnimationFrame` loop per card — no CSS keyframes, no D3
+  - Two sine waves (X/Y) with irrational-ratio periods (70–126s X, 89–160s Y) → Lissajous paths covering the full container
+  - `container.offsetWidth/offsetHeight` read at runtime — adapts to any screen size
+  - `left`/`top` set by JS; `transform: translate(-50%,-50%)` handles centering only (no conflict)
+  - Negative time offset so cards appear mid-path on mount
+- Faint AAAH logo at 12% opacity centred as backdrop
+- Empty state message if `hires.length === 0`
 
-### Task 2 — 1-minute inactivity timer in display/page.tsx (commit: 9dc9bcd)
-- Added `useHires()` call at page level (data ready before switch)
-- Added `showHiredNetwork` state (default `false`)
-- `useEffect` watches `session?.state`: sets 60s timer when state is `idle`, `screensaver`, or no session; clears and resets to `false` on any active game state
-- Render: idle/screensaver case returns `<HiredNetworkScreen hires={hires} />` when `showHiredNetwork`, else `<ScreensaverScreen />`
+### 1-minute inactivity timer (commit: 9dc9bcd)
+- `display/page.tsx`: 60s `setTimeout` fires `showHiredNetwork = true` when session is idle/screensaver/absent
+- Resets to `false` on any active game state; `ScreensaverScreen` shows for the first 60s
 
-## Verification Results
-- `npx tsc --noEmit` — clean (no errors)
-- `npm run build` — clean (Next.js 16.2.10 Turbopack, all routes static)
-- Human visual verification — **PENDING** (checkpoint)
+### Bug fixes during QA
+- `a808e4f` — `flex:1` so container fills flex-column parent (cards were being clipped at height 0)
+- `c6eb4a0`, `2a6c7b4` — intermediate CSS attempts (CSS custom properties, baked keyframes) — abandoned
+- `bd34fc8` — final JS approach accepted
+- `983fd20`, `bd34fc8` — route group experiment (headerless display) tried and reverted at user request
 
 ## Key Decisions
-- **CSS over D3** — D3 force simulation produced random bobbing/drifting; pure CSS float with seeded positions gives stable, pleasant constellation appearance
-- **Negative animationDelay** — All nodes appear already-moving on mount rather than starting from rest simultaneously
-- **seedFromId() hash** — Deterministic position from hire.id; no re-renders cause position jumps
-- **`<img>` not Next.js `<Image>`** — Avatars are dynamically loaded by id from `/avatars/`; Next.js Image requires explicit width/height; plain `<img>` with objectFit is simpler for circular clip context
-- **useHires at page level** — Data fetched once at display/page, passed as prop; avoids duplicate subscriptions when switching between ScreensaverScreen and HiredNetworkScreen
-- **useHires errors silently ignored** — Empty array is safe fallback; the network screen renders the empty state without crashing
+
+- **CSS keyframes abandoned** — three CSS approaches failed; JS `requestAnimationFrame` is definitive
+- **Lissajous paths** — irrational X:Y period ratio → complex non-repeating full-screen coverage
+- **Container-aware** — `offsetWidth/Height` at runtime; no hard-coded pixel values
+- **Header stays** — user confirmed display page should keep the AAAH header
+
+## Verification
+
+- `npx tsc --noEmit` — clean
+- `npm run build` — clean
+- Human QA — partially approved; animation acceptable, refinement possible in future session
+
+## Outstanding / Resume Notes
+
+- Animation coverage could be improved (user noted "not perfect") — acceptable for now, revisit if needed
+- Plan 06-02 (Realtime live updates) not yet started — begin here next session
