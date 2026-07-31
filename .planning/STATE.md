@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 6 of 7 (Hired Network)
-Plan: 1 of ? in current phase — awaiting human checkpoint verification
-Status: CHECKPOINT — 06-01 auto tasks complete (d3 installed, useHires hook, HiredNetworkCanvas, ScreensaverScreen wired). Awaiting human visual QA of canvas render at /display.
-Last activity: 2026-07-31 — 06-01: static hired network canvas built; paused at checkpoint:human-verify
+Plan: 1 of ? in current phase — COMPLETE (CSS constellation approach, human checkpoint pending)
+Status: CHECKPOINT — 06-01 complete with CSS constellation approach. D3 removed; HiredNetworkScreen built as pure CSS floating cards with seeded stable positions. 60s inactivity timer in display/page.tsx switches screensaver to hired network. Awaiting human visual QA.
+Last activity: 2026-07-31 — 06-01: D3 scrapped, CSS constellation HiredNetworkScreen built, 1-minute timer added; paused at checkpoint:human-verify
 
 Progress: █████████████████ ~80%
 
@@ -73,11 +73,14 @@ Recent decisions affecting current work:
 - **Display page idle/screensaver placeholder is hardcoded English** — Inline placeholder only; will be replaced in 05-03 (screensaver plan) with the full bilingual screensaver. Established in 05-01.
 - **Display FinalResultScreen: track null-guarded** — `session.track` is `Track | null`; the track line only renders when track is non-null to avoid a bad `trackName(null)` call. Established in 05-02.
 - **FinalResultScreen pulsing ring inside relative wrapper** — `animate-ping` ring is absolutely positioned inside a `relative` div wrapping the avatar Image; this ties ring dimensions to avatar without affecting surrounding flex layout. Established in 05-02.
-- **ScreensaverScreen float via inline `<style>` keyframe** — CSS-only, no Framer Motion; Tailwind v4 arbitrary keyframe syntax is verbose; inline style tag is simpler. Phase 6 adds D3/Canvas. Established in 05-03.
-- **ScreensaverScreen z-layer: glow z-0, content z-10** — Phase 6 hired-network D3/Canvas overlay slots in at z-5 between glow and content; no refactor needed. Established in 05-03.
-- **HiredNetworkCanvas uses inline style zIndex:5 not Tailwind z-5** — Tailwind v4 may not include z-5 in its default scale; inline style is safe. Established in 06-01.
-- **D3 simulation restarted with alpha(0.6) on hires change** — Existing node positions preserved via existingById merge so nodes don't snap to centre on realtime updates (Phase 06-02). Established in 06-01.
-- **useHires errors silently ignored** — Empty array is safe fallback; the screensaver still renders without nodes if the query fails. Established in 06-01.
+- **ScreensaverScreen float via inline `<style>` keyframe** — CSS-only, no Framer Motion; Tailwind v4 arbitrary keyframe syntax is verbose; inline style tag is simpler. Established in 05-03.
+- **ScreensaverScreen z-layer: glow z-0, content z-10** — No D3 canvas layer needed; HiredNetworkScreen is a separate full-screen component rendered instead of ScreensaverScreen. Established in 05-03 (revised 06-01).
+- **HiredNetworkScreen: CSS constellation not D3** — D3 force simulation produced random bobbing; pure CSS @keyframes float with seeded stable positions gives a clean constellation. Established in 06-01.
+- **seedFromId() hash for stable node positions** — Deterministic position derived from hire.id; no Math.random() so positions don't jump on re-render. Established in 06-01.
+- **Negative animationDelay on float** — All nodes appear already mid-motion on mount; avoids all-nodes-start-simultaneously effect. Established in 06-01.
+- **useHires called at display/page level** — Data fetched once, passed as prop to HiredNetworkScreen; avoids duplicate subscriptions across screen switches. Established in 06-01.
+- **60s timer resets on any active game state** — showHiredNetwork flips false immediately when session enters a game state; user always sees ScreensaverScreen first after game ends. Established in 06-01.
+- **useHires errors silently ignored** — Empty array is safe fallback; the hired network screen shows empty state without crashing. Established in 06-01.
 
 ### Deferred Issues
 
@@ -90,8 +93,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: 06-01 checkpoint:human-verify. Two auto tasks complete. Awaiting user to run `npm run dev`, visit /display, verify avatar nodes with coloured rings appear and cluster by track, then type "approved".
+Stopped at: 06-01 checkpoint:human-verify. CSS constellation approach complete. Awaiting user to run `npm run dev`, visit /display, wait 60s in idle/screensaver state, and confirm floating hire cards appear.
 
 ### Resume steps
 
-After human approves: continue 06-01 (plan is complete after checkpoint approval — proceed to 06-02).
+After human approves: proceed to 06-02 (Realtime subscription for live hire updates).
