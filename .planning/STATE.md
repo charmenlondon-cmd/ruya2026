@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-07-03)
 
 **Core value:** Stunning display + reliable realtime sync + animated hired network + smooth bilingual player experience
-**Current focus:** Phase 5 — Display Screen
+**Current focus:** Phase 6 — Hired Network
 
 ## Current Position
 
-Phase: 5 of 7 (Display Screen)
-Plan: 3 of 3 in current phase — 05-03 Task 1 complete, Task 2 awaiting human verification
-Status: CHECKPOINT — human-verify gate blocking. All 4 display screens built; QA verification required before Phase 5 closes
-Last activity: 2026-07-31 — 05-03: ScreensaverScreen (animated float, AAAH branding, z-layer for Phase 6 network)
+Phase: 6 of 7 (Hired Network)
+Plan: 0 of ? in current phase — ready to begin
+Status: READY — Phase 5 complete. All 4 display screens verified by human QA. ScreensaverScreen reserves z-5 for Phase 6 D3/Canvas network overlay.
+Last activity: 2026-07-31 — 05-03: ScreensaverScreen + answer highlight + two-write flow fix; human QA approved
 
-Progress: ████████████ ~68%
+Progress: ████████████████ ~75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 20 min
-- Total execution time: 1.43 hours
+- Total plans completed: 12
+- Average duration: ~20 min
+- Total execution time: ~2.7 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: ████████████ ~68%
 | 02-realtime-game-engine | 2/2 | 50 min | 25 min |
 | 03-question-engine | 2/2 | ~25 min | ~12 min |
 | 04-controller-ui | 3/3 | ~60 min | ~20 min |
-| 05-display-screen | 2/? | ~20 min | ~10 min |
+| 05-display-screen | 3/3 | ~55 min | ~18 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min), 03-01 (seed), 04-01 (~15 min)
+- Last 5 plans: 04-03 (~20 min), 05-01 (~10 min), 05-02 (~10 min), 05-03 (~35 min)
 - Trend: plans remain fast when tasks are code-generation rather than investigation
 
 ## Accumulated Context
@@ -87,8 +87,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: Phase 5, plan 05-03 Task 2 checkpoint. ScreensaverScreen built and wired. Awaiting human QA of all 4 display screens.
+Stopped at: Phase 5 complete. Human QA approved all 4 display screens. Ready to begin Phase 6 (Hired Network).
 
 ### Resume steps
 
-After user responds "approved" to the checkpoint: close Phase 05, update STATE.md to Phase 6, execute Phase 06 (Hired Network).
+Begin Phase 6: run `gsd:plan-phase` or `gsd:execute-phase` for 06-hired-network.
