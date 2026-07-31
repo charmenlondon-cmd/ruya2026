@@ -29,7 +29,7 @@ interface Props {
 
 export default function HiredNetworkScreen({ hires }: Props) {
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', background: '#020617', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', flex: 1, background: '#020617', overflow: 'hidden' }}>
       <style>{`
         @keyframes float {
           0%   { transform: translate(0px, 0px); }
