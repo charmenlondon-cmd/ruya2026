@@ -106,11 +106,16 @@ export function QuestionScreen({ session, language }: Props) {
           {ANSWERS.map(({ key, textKey, imageKey }) => {
             const imageUrl = question[imageKey] as string | null
             const text = question[textKey] as string | null
+            const isSelected = session.state === 'answer_submitted' && session.last_answer === key
 
             return (
               <div
                 key={key}
-                className="bg-white/80 rounded-2xl p-6 flex flex-col items-center gap-4"
+                className={`rounded-2xl p-6 flex flex-col items-center gap-4 transition-all duration-200 ${
+                  isSelected
+                    ? 'bg-aaah-light-teal/90 ring-4 ring-white scale-105'
+                    : 'bg-white/80'
+                }`}
               >
                 <div className="w-12 h-12 rounded-full bg-aaah-dark-teal text-white text-2xl font-bold flex items-center justify-center flex-shrink-0">
                   {key}
