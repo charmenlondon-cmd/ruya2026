@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 5 of 7 (Display Screen)
-Plan: 1 of ? in current phase — 05-01 complete
-Status: 05-01 done — WaitingScreen + QuestionScreen + display page orchestrator, TypeScript clean, build passes
-Last activity: 2026-07-31 — 05-01: full display screen real-time routing; inline placeholders for final_result and idle/screensaver
+Plan: 2 of ? in current phase — 05-02 complete
+Status: 05-02 done — FinalResultScreen component + wired into display page, TypeScript clean, build passes
+Last activity: 2026-07-31 — 05-02: TV-scale FinalResultScreen with hired (green, pulsing ring) and not-hired (teal, dignified) outcomes
 
 Progress: ████████████ ~64%
 
@@ -31,7 +31,7 @@ Progress: ████████████ ~64%
 | 02-realtime-game-engine | 2/2 | 50 min | 25 min |
 | 03-question-engine | 2/2 | ~25 min | ~12 min |
 | 04-controller-ui | 3/3 | ~60 min | ~20 min |
-| 05-display-screen | 1/? | ~15 min | ~15 min |
+| 05-display-screen | 2/? | ~20 min | ~10 min |
 
 **Recent Trend:**
 - Last 5 plans: 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min), 03-01 (seed), 04-01 (~15 min)
@@ -71,6 +71,8 @@ Recent decisions affecting current work:
 - **LanguageSelectScreen buttons stay bilingual by design** — "English" and "العربية" labels are hardcoded, not localised — they are the selector itself and must always show both languages regardless of current session language. Established in 04-03.
 - **Display QuestionScreen answer grid forced dir=ltr** — A/B/C columns are visual (not textual flow); forcing LTR prevents RTL parent from flipping the column order in Arabic sessions. Established in 05-01.
 - **Display page idle/screensaver placeholder is hardcoded English** — Inline placeholder only; will be replaced in 05-03 (screensaver plan) with the full bilingual screensaver. Established in 05-01.
+- **Display FinalResultScreen: track null-guarded** — `session.track` is `Track | null`; the track line only renders when track is non-null to avoid a bad `trackName(null)` call. Established in 05-02.
+- **FinalResultScreen pulsing ring inside relative wrapper** — `animate-ping` ring is absolutely positioned inside a `relative` div wrapping the avatar Image; this ties ring dimensions to avatar without affecting surrounding flex layout. Established in 05-02.
 
 ### Deferred Issues
 
@@ -83,8 +85,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: Phase 5, plan 05-01 complete. WaitingScreen + QuestionScreen + display orchestrator done.
+Stopped at: Phase 5, plan 05-02 complete. FinalResultScreen built and wired into display page.
 
 ### Resume steps
 
-Execute plan 05-02 (next display screen plan) — run gsd:execute-plan for the next plan in phase 05.
+Execute plan 05-03 (next display screen plan) — screensaver/idle screen replacing the current inline placeholder.
