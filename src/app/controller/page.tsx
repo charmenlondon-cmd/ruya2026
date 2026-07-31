@@ -68,7 +68,7 @@ export default function ControllerPage() {
           case 'track_select':
             return <TrackSelectScreen session={session} language={language} />
           case 'question_active':
-          case 'answer_submitted':
+          case 'answer_submitted': // legacy — kept for graceful handling if DB has stale state
             return <QuizScreen session={session} language={language} />
           case 'final_result':
             return <FinalResultScreen session={session} language={language} />

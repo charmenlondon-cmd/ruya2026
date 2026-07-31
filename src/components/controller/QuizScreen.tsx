@@ -30,6 +30,18 @@ export function QuizScreen({ session, language }: Props) {
   const [questions, setQuestions] = useState<Question[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
   const [answered, setAnswered] = useState(false)
+  // Optimistic local index so the question advances instantly without waiting for Realtime
+  const [localIndex, setLocalIndex] = useState(session.current_question)
+
+  // Keep localIndex in sync if Supabase diverges (e.g. session reset)
+  useEffect(() => {
+    setLocalIndex(session.current_question)
+  }, [session.current_question])
+
+  // Reset answered flag when question advances
+  useEffect(() => {
+    setAnswered(false)
+  }, [localIndex])
 
   // Load questions when track/language are set
   useEffect(() => {
@@ -39,28 +51,6 @@ export function QuizScreen({ session, language }: Props) {
       .catch((err: Error) => setLoadError(err.message))
   }, [session.track, session.language])
 
-  // Reset answered flag when question changes
-  useEffect(() => {
-    setAnswered(false)
-  }, [session.current_question])
-
-  // Auto-advance from answer_submitted to next question or final result after 600ms
-  useEffect(() => {
-    if (session.state !== 'answer_submitted') return
-    const timer = setTimeout(() => {
-      if (session.current_question < 9) {
-        updateSession(session.id, {
-          current_question: session.current_question + 1,
-          state: 'question_active',
-        }).catch(console.error)
-      } else {
-        updateSession(session.id, { state: 'final_result' }).catch(console.error)
-      }
-    }, 600)
-    return () => clearTimeout(timer)
-  }, [session.state, session.id, session.current_question])
-
-  // Loading state
   if (questions.length === 0 && !loadError) {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
@@ -78,22 +68,33 @@ export function QuizScreen({ session, language }: Props) {
     )
   }
 
-  const question = questions[session.current_question]
+  const question = questions[localIndex]
 
   if (!question) {
     return <div className="text-white text-lg p-8">Question not found.</div>
   }
 
   function handleAnswer(answer: CorrectAnswer) {
-    if (answered || session.state !== 'question_active') return
+    if (answered) return
     setAnswered(true)
+
     const isCorrect = answer === question.correct_answer
     const newScore = session.score + (isCorrect ? 1 : 0)
+    const isLast = localIndex >= 9
+    const nextIndex = isLast ? localIndex : localIndex + 1
+
+    // Advance locally after 150ms (brief visual tap feedback) — no Realtime wait needed
+    setTimeout(() => {
+      if (!isLast) setLocalIndex(nextIndex)
+    }, 150)
+
+    // Single write: score + next question + final state all at once
     updateSession(session.id, {
       last_answer: answer,
       last_answer_correct: isCorrect,
       score: newScore,
-      state: 'answer_submitted',
+      current_question: nextIndex,
+      state: isLast ? 'final_result' : 'question_active',
     }).catch(console.error)
   }
 
@@ -102,7 +103,7 @@ export function QuizScreen({ session, language }: Props) {
       <StartOverButton session={session} language={language} />
       {/* Progress */}
       <p className="text-white text-sm font-semibold">
-        {strings.questionOf(session.current_question + 1, 10)}
+        {strings.questionOf(localIndex + 1, 10)}
       </p>
 
       {/* Question card */}
