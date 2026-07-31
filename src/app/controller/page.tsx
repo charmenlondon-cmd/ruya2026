@@ -9,7 +9,6 @@ import { AvatarSelectScreen } from '@/components/controller/AvatarSelectScreen'
 import { NameEntryScreen } from '@/components/controller/NameEntryScreen'
 import { TrackSelectScreen } from '@/components/controller/TrackSelectScreen'
 import { QuizScreen } from '@/components/controller/QuizScreen'
-import { QuestionResultScreen } from '@/components/controller/QuestionResultScreen'
 import { FinalResultScreen } from '@/components/controller/FinalResultScreen'
 import type { Language, Session } from '@/types/database'
 
@@ -71,8 +70,6 @@ export default function ControllerPage() {
           case 'question_active':
           case 'answer_submitted':
             return <QuizScreen session={session} language={language} />
-          case 'question_result':
-            return <QuestionResultScreen session={session} language={language} />
           case 'final_result':
             return <FinalResultScreen session={session} language={language} />
           default:

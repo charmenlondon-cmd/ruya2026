@@ -44,14 +44,21 @@ export function QuizScreen({ session, language }: Props) {
     setAnswered(false)
   }, [session.current_question])
 
-  // Auto-advance from answer_submitted to question_result after 1500ms
+  // Auto-advance from answer_submitted to next question or final result after 600ms
   useEffect(() => {
     if (session.state !== 'answer_submitted') return
-    const t = setTimeout(() => {
-      updateSession(session.id, { state: 'question_result' }).catch(console.error)
-    }, 1500)
-    return () => clearTimeout(t)
-  }, [session.state, session.id])
+    const timer = setTimeout(() => {
+      if (session.current_question < 9) {
+        updateSession(session.id, {
+          current_question: session.current_question + 1,
+          state: 'question_active',
+        }).catch(console.error)
+      } else {
+        updateSession(session.id, { state: 'final_result' }).catch(console.error)
+      }
+    }, 600)
+    return () => clearTimeout(timer)
+  }, [session.state, session.id, session.current_question])
 
   // Loading state
   if (questions.length === 0 && !loadError) {
