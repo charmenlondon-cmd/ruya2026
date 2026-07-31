@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { updateSession } from '@/lib/session'
 import { getQuestionsForTrack } from '@/lib/questions'
 import { t } from '@/lib/i18n'
+import { StartOverButton } from '@/components/controller/StartOverButton'
 import type { Language, Session, Question, CorrectAnswer } from '@/types/database'
 
 interface Props {
@@ -90,7 +91,8 @@ export function QuizScreen({ session, language }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center w-full max-w-lg gap-4">
+    <div className="relative flex flex-col items-center w-full max-w-lg gap-4">
+      <StartOverButton session={session} language={language} />
       {/* Progress */}
       <p className="text-white text-sm font-semibold">
         {strings.questionOf(session.current_question + 1, 10)}

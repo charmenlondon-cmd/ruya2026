@@ -20,6 +20,7 @@ const strings = {
     wellGetBack: "We'll Get Back to You",
     getBackMessage: 'Great effort! Keep developing your skills.',
     playAgain: 'Play Again',
+    startOver: 'Start Over',
     tapToStart: 'Tap to Start',
     start: 'Start',
     trackName: (track: Track) => track as string,
@@ -43,6 +44,7 @@ const strings = {
     wellGetBack: 'سنتواصل معك',
     getBackMessage: '.جهد رائع! استمر في تطوير مهاراتك',
     playAgain: 'العب مرة أخرى',
+    startOver: 'البداية',
     tapToStart: 'ابدأ',
     start: 'ابدأ',
     trackName: (track: Track): string =>

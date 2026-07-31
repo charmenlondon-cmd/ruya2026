@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { updateSession } from '@/lib/session'
 import { t } from '@/lib/i18n'
+import { StartOverButton } from '@/components/controller/StartOverButton'
 import type { Language, Session } from '@/types/database'
 
 interface Props {
@@ -17,7 +18,8 @@ const ALL_AVATARS = [...FEMALE_AVATARS, ...MALE_AVATARS]
 export function AvatarSelectScreen({ session, language }: Props) {
   const strings = t(language)
   return (
-    <div className="flex flex-col items-center">
+    <div className="relative flex flex-col items-center">
+      <StartOverButton session={session} language={language} />
       <h2 className="text-2xl font-bold text-white mb-6">{strings.chooseAvatar}</h2>
       <div className="grid grid-cols-5 gap-4">
         {ALL_AVATARS.map((avatarId) => (

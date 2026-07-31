@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { updateSession } from '@/lib/session'
 import { t } from '@/lib/i18n'
+import { StartOverButton } from '@/components/controller/StartOverButton'
 import type { Language, Session } from '@/types/database'
 
 interface Props {
@@ -22,7 +23,8 @@ export function NameEntryScreen({ session, language }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="relative flex flex-col items-center w-full">
+      <StartOverButton session={session} language={language} />
       <h2 className="text-2xl font-bold text-white mb-6">{strings.enterName}</h2>
       <input
         type="text"

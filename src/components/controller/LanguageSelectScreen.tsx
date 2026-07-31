@@ -2,6 +2,7 @@
 
 import { updateSession } from '@/lib/session'
 import { t } from '@/lib/i18n'
+import { StartOverButton } from '@/components/controller/StartOverButton'
 import type { Language, Session } from '@/types/database'
 
 interface Props {
@@ -12,7 +13,8 @@ interface Props {
 export function LanguageSelectScreen({ session, language }: Props) {
   const strings = t(language)
   return (
-    <div className="flex flex-col items-center">
+    <div className="relative flex flex-col items-center">
+      <StartOverButton session={session} language={language} />
       <h2 className="text-2xl font-bold text-white mb-8">{strings.selectLanguage}</h2>
       <div className="flex gap-6">
         <button

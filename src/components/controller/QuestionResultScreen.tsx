@@ -2,6 +2,7 @@
 
 import { updateSession } from '@/lib/session'
 import { t } from '@/lib/i18n'
+import { StartOverButton } from '@/components/controller/StartOverButton'
 import type { Language, Session } from '@/types/database'
 
 interface Props {
@@ -26,7 +27,8 @@ export function QuestionResultScreen({ session, language }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center w-full max-w-lg gap-6">
+    <div className="relative flex flex-col items-center w-full max-w-lg gap-6">
+      <StartOverButton session={session} language={language} />
       {/* Result card */}
       <div className="bg-white/90 rounded-2xl p-8 w-full flex flex-col items-center gap-4">
         {/* Correct/Incorrect icon */}

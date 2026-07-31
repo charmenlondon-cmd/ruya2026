@@ -2,6 +2,7 @@
 
 import { updateSession } from '@/lib/session'
 import { t } from '@/lib/i18n'
+import { StartOverButton } from '@/components/controller/StartOverButton'
 import type { Language, Session, Track } from '@/types/database'
 
 interface Props {
@@ -25,7 +26,8 @@ const TRACKS: Track[] = [
 export function TrackSelectScreen({ session, language }: Props) {
   const strings = t(language)
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="relative flex flex-col items-center w-full">
+      <StartOverButton session={session} language={language} />
       <h2 className="text-2xl font-bold text-white mb-6">{strings.chooseTrack}</h2>
       <div className="grid grid-cols-2 gap-3 w-full max-w-lg">
         {TRACKS.map((track) => (
