@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-07-03)
 
 **Core value:** Stunning display + reliable realtime sync + animated hired network + smooth bilingual player experience
-**Current focus:** Phase 3 — Question Engine
+**Current focus:** Phase 4 — Controller UI
 
 ## Current Position
 
-Phase: 3 of 7 (Question Engine)
-Plan: 2 of 2 in current phase
-Status: Phase 3 complete — all plans executed and seeded
-Last activity: 2026-07-06 — Phase 3 plan 01 seed completed; 200 rows and 12 images in Supabase (deferred from original execution due to missing SUPABASE_SERVICE_ROLE_KEY)
+Phase: 4 of 7 (Controller UI)
+Plan: 1 of 3 in current phase — complete
+Status: Plan 04-01 complete — controller page orchestrator + onboarding screens built
+Last activity: 2026-07-31 — Plan 04-01 executed; controller page rewritten with state-based router; 4 onboarding screens created (language, avatar, name, track)
 
-Progress: ███████░░░ 65%
+Progress: ████████░░ 75%
 
 ## Performance Metrics
 
@@ -30,10 +30,11 @@ Progress: ███████░░░ 65%
 | 01-foundation | 3/3 | 52 min | 17 min |
 | 02-realtime-game-engine | 2/2 | 50 min | 25 min |
 | 03-question-engine | 2/2 | ~25 min | ~12 min |
+| 04-controller-ui | 1/3 | ~15 min | — |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15 min), 01-02 (12 min), 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min)
-- Trend: 02-01 longer due to TypeScript interface/type compatibility investigation; 02-02 very fast — just wired components
+- Last 5 plans: 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min), 03-01 (seed), 04-01 (~15 min)
+- Trend: plans remain fast when tasks are code-generation rather than investigation
 
 ## Accumulated Context
 
@@ -71,9 +72,9 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-07-06
-Stopped at: Phase 3 fully complete. All 2 plans executed and seed data confirmed (200 rows, 12 images in Supabase). Ready for Phase 4 (Controller UI).
+Last session: 2026-07-31
+Stopped at: Phase 4, Plan 01 complete. Controller page rewritten with state-based screen router. 4 onboarding screen components built (LanguageSelectScreen, AvatarSelectScreen, NameEntryScreen, TrackSelectScreen). TypeScript clean, build passes.
 
 ### Resume steps
 
-Run `/gsd:plan-phase 4` to plan the Controller UI phase, then `/gsd:execute-phase 4`.
+Execute plan 04-02 to build the quiz flow (question_active → answer_submitted → question_result → final_result).
