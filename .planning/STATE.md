@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 ## Current Position
 
 Phase: 5 of 7 (Display Screen)
-Plan: 0 of ? in current phase — ready to plan
-Status: Phase 04 complete — all 3 plans done, TypeScript clean, build passes
-Last activity: 2026-07-31 — Phase 04 wrapped: bilingual i18n, RTL layout, Start Over button on all screens
+Plan: 1 of ? in current phase — 05-01 complete
+Status: 05-01 done — WaitingScreen + QuestionScreen + display page orchestrator, TypeScript clean, build passes
+Last activity: 2026-07-31 — 05-01: full display screen real-time routing; inline placeholders for final_result and idle/screensaver
 
-Progress: ██████████ ~57%
+Progress: ████████████ ~64%
 
 ## Performance Metrics
 
@@ -31,6 +31,7 @@ Progress: ██████████ ~57%
 | 02-realtime-game-engine | 2/2 | 50 min | 25 min |
 | 03-question-engine | 2/2 | ~25 min | ~12 min |
 | 04-controller-ui | 3/3 | ~60 min | ~20 min |
+| 05-display-screen | 1/? | ~15 min | ~15 min |
 
 **Recent Trend:**
 - Last 5 plans: 01-03 (25 min), 02-01 (35 min), 02-02 tasks (~15 min), 03-01 (seed), 04-01 (~15 min)
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - **dir applied once to controller page wrapper** — Single HTML attribute cascades RTL to all child components automatically; no per-component direction handling needed. Established in 04-03.
 - **StartOverButton shared component, not inlined** — Full reset payload lives in one place; all 7 screens import the component and pass session + language. Ghost button positioned absolute top-right inside a relative wrapper. Established in 04-03.
 - **LanguageSelectScreen buttons stay bilingual by design** — "English" and "العربية" labels are hardcoded, not localised — they are the selector itself and must always show both languages regardless of current session language. Established in 04-03.
+- **Display QuestionScreen answer grid forced dir=ltr** — A/B/C columns are visual (not textual flow); forcing LTR prevents RTL parent from flipping the column order in Arabic sessions. Established in 05-01.
+- **Display page idle/screensaver placeholder is hardcoded English** — Inline placeholder only; will be replaced in 05-03 (screensaver plan) with the full bilingual screensaver. Established in 05-01.
 
 ### Deferred Issues
 
@@ -80,8 +83,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-07-31
-Stopped at: Phase 4 complete. All 3 plans done. Phase 05 (Display Screen) is next.
+Stopped at: Phase 5, plan 05-01 complete. WaitingScreen + QuestionScreen + display orchestrator done.
 
 ### Resume steps
 
-Plan phase 05 (Display Screen) — run gsd:plan-phase or gsd:execute-phase for phase 05.
+Execute plan 05-02 (next display screen plan) — run gsd:execute-plan for the next plan in phase 05.
