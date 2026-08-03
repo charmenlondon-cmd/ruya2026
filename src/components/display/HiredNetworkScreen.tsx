@@ -148,11 +148,14 @@ export default function HiredNetworkScreen({ hires }: Props) {
       ref={containerRef}
       style={{ position: 'relative', flex: 1, background: '#020617', overflow: 'hidden' }}
     >
-      {/* Faint AAAH logo at centre */}
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.12, pointerEvents: 'none' }}>
+      {/* Centre logo + tagline */}
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logos/aaah-logo-white.png" alt="" style={{ width: 160 }}
+        <img src="/logos/aaah-logo-white.png" alt="Abdulla Al Arif Holding" style={{ width: 200, opacity: 0.9 }}
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
+        <p style={{ color: '#ffffff', fontSize: 18, fontWeight: 600, marginTop: 14, letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.75, textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
+          Our Future Leaders
+        </p>
       </div>
 
       {hires.length === 0 && (
