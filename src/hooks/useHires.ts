@@ -15,6 +15,21 @@ export function useHires(): Hire[] {
       .then(({ data }) => {
         setHires(data ?? [])
       })
+
+    const channel = supabase
+      .channel('hires-feed')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'hires' },
+        (payload) => {
+          setHires((prev) => [...prev, payload.new as Hire])
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   return hires

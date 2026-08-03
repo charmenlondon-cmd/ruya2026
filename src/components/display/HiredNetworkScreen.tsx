@@ -27,10 +27,27 @@ function seed(id: string, n: number): number {
 interface CardProps {
   hire: Hire
   containerRef: React.RefObject<HTMLDivElement | null>
+  isNew: boolean
 }
 
-function HireCard({ hire, containerRef }: CardProps) {
+function HireCard({ hire, containerRef, isNew }: CardProps) {
   const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !isNew) return
+    el.style.opacity = '0'
+    let id1: number, id2: number
+    id1 = requestAnimationFrame(() => {
+      id2 = requestAnimationFrame(() => {
+        if (el) {
+          el.style.transition = 'opacity 0.6s ease'
+          el.style.opacity = '1'
+        }
+      })
+    })
+    return () => { cancelAnimationFrame(id1); cancelAnimationFrame(id2) }
+  }, [isNew])
 
   useEffect(() => {
     const el = ref.current
@@ -40,8 +57,8 @@ function HireCard({ hire, containerRef }: CardProps) {
 
     // Two sine waves with different, irrational-ratio periods → complex Lissajous path
     // that covers the full container width and height over time
-    const periodX = 70 * (1 + r(0) * 0.8)         // 70–126 s per x-cycle
-    const periodY = 70 * (1 + r(1) * 0.8) * 1.27  // 89–160 s per y-cycle
+    const periodX = 35 * (1 + r(0) * 0.8)         // 35–63 s per x-cycle
+    const periodY = 35 * (1 + r(1) * 0.8) * 1.27  // 44–80 s per y-cycle
     const phaseX  = r(2) * Math.PI * 2
     const phaseY  = r(3) * Math.PI * 2
     // Negative time offset so all cards are already mid-path on mount
@@ -121,6 +138,10 @@ interface Props {
 
 export default function HiredNetworkScreen({ hires }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const initialIdsRef = useRef<Set<string> | null>(null)
+  if (initialIdsRef.current === null) {
+    initialIdsRef.current = new Set(hires.map((h) => h.id))
+  }
 
   return (
     <div
@@ -141,7 +162,12 @@ export default function HiredNetworkScreen({ hires }: Props) {
       )}
 
       {hires.map((hire) => (
-        <HireCard key={hire.id} hire={hire} containerRef={containerRef} />
+        <HireCard
+          key={hire.id}
+          hire={hire}
+          containerRef={containerRef}
+          isNew={!initialIdsRef.current!.has(hire.id)}
+        />
       ))}
     </div>
   )

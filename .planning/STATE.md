@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-07-03)
 
 **Core value:** Stunning display + reliable realtime sync + animated hired network + smooth bilingual player experience
-**Current focus:** Phase 6 — Hired Network
+**Current focus:** Phase 7 — Admin Panel & Deploy
 
 ## Current Position
 
-Phase: 6 of 7 (Hired Network)
-Plan: 1 of 2 in current phase — IN PROGRESS (visual QA: "looking better, not perfect"; stopped for the day)
-Status: PAUSED — 06-01 code complete and building clean. HiredNetworkScreen uses JS requestAnimationFrame Lissajous paths. Animation acceptable; user happy enough to stop. 06-02 not started.
-Last activity: 2026-07-31 — 06-01: extensive animation iteration (D3 → CSS keyframes × 3 → JS rAF Lissajous); route group experiment tried and reverted; header restored to root layout
+Phase: 7 of 7 (Admin Panel & Deploy)
+Plan: 0 of 2 — not started
+Status: READY — Phase 6 complete. 07-01 (admin panel) is next.
+Last activity: 2026-08-03 — 06-02: Realtime subscription added to useHires; fade-in for live arrivals; animation speed doubled at user request. Phase 6 approved.
 
-Progress: █████████████████ ~80%
+Progress: ███████████████████ ~90%
 
 ## Performance Metrics
 
