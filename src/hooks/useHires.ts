@@ -23,7 +23,14 @@ export function useHires(): Hire[] {
         { event: 'INSERT', schema: 'public', table: 'hires' },
         (payload) => {
           const incoming = payload.new as Hire
-          setHires((prev) => prev.some(h => h.id === incoming.id) ? prev : [...prev, incoming])
+          setHires((prev) => {
+            const duplicate = prev.some(h =>
+              h.id === incoming.id ||
+              (incoming.session_id && h.session_id === incoming.session_id) ||
+              (h.player_name === incoming.player_name && h.track === incoming.track)
+            )
+            return duplicate ? prev : [...prev, incoming]
+          })
         }
       )
       .subscribe()
