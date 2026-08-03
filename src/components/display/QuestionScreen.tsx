@@ -82,14 +82,9 @@ export function QuestionScreen({ session, language }: Props) {
             </span>
           )}
         </div>
-        <div className="flex flex-col items-end gap-1">
-          <span className="text-white text-lg font-semibold">
-            {strings.questionOf(session.current_question + 1, 10)}
-          </span>
-          <span className="text-white text-lg">
-            {strings.score(session.score, session.current_question)}
-          </span>
-        </div>
+        <span className="text-white text-lg font-semibold">
+          {strings.questionOf(session.current_question + 1, 10)}
+        </span>
       </div>
 
       {/* Main content */}
