@@ -22,7 +22,8 @@ export function useHires(): Hire[] {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'hires' },
         (payload) => {
-          setHires((prev) => [...prev, payload.new as Hire])
+          const incoming = payload.new as Hire
+          setHires((prev) => prev.some(h => h.id === incoming.id) ? prev : [...prev, incoming])
         }
       )
       .subscribe()
