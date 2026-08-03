@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { updateSession } from '@/lib/session'
 import { createHire } from '@/lib/hires'
@@ -17,6 +17,7 @@ export function FinalResultScreen({ session, language }: Props) {
   const hireCreatedRef = useRef(false)
   const isHired = session.score >= 7
   const strings = t(language)
+  const [countdown, setCountdown] = useState(15)
 
   // Write hire record once on mount for passing scores
   useEffect(() => {
@@ -38,6 +39,17 @@ export function FinalResultScreen({ session, language }: Props) {
       last_answer_correct: null,
     }).catch(console.error)
   }
+
+  // Auto-reset after 15 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) { clearInterval(interval); handlePlayAgain(); return 0 }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="relative flex flex-col items-center w-full max-w-lg gap-6">
@@ -90,6 +102,11 @@ export function FinalResultScreen({ session, language }: Props) {
           </>
         )}
       </div>
+
+      {/* Auto-reset countdown */}
+      <p className="text-white/60 text-sm">
+        Returning to start in {countdown}s…
+      </p>
 
       {/* Play Again */}
       <button
