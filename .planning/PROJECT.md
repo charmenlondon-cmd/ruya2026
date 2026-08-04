@@ -16,7 +16,16 @@ All four of these are non-negotiable — none can be compromised:
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Two simultaneous lanes — `/controller?lane=1` + `/display?lane=1`, `/controller?lane=2` + `/display?lane=2` — run independent games with a shared hires pool
+- [x] Display with no active session shows screensaver (not a blank "waiting" state)
+- [x] Hired network logo + tagline centred correctly on all screen sizes
+- [x] Result screen: "You're Hired!" heading removed; congratulations sub-message retained
+- [x] Track name shown on result screen (controller and display)
+- [x] Hires network tagline updated to "Building Foundations. Launching Futures."
+- [x] Track selection prompt updated to "What's your area of interest?" (EN + AR)
+- [x] Controller idle screen shows "Explore your skills." above the start prompt
+- [x] HR Q9 converted to visual question — A/B/C image answers live in DB and deployed
+- [x] Architecture & Design Q6 Arabic row fixed — now uses image answers (was text only)
 
 ### Active
 
@@ -89,4 +98,21 @@ All four of these are non-negotiable — none can be compromised:
 | Arabic via separate Supabase rows, same table | Simpler schema, easy for staff to edit translations directly | — Pending |
 
 ---
-*Last updated: 2026-07-03 after initialization*
+---
+
+## Session Log
+
+### 2026-08-04
+- Added dual-lane support for two simultaneous game instances. Requires `?lane=1` / `?lane=2` on both controller and display URLs. Hires pool remains shared across lanes.
+- Fixed Supabase Realtime lane isolation: added `REPLICA IDENTITY FULL` to sessions table and a client-side lane guard in `useSession` as defence-in-depth.
+- Display with no session now shows screensaver instead of "Waiting for session…".
+- Fixed hired network logo/tagline centring using `position: fixed` to anchor to true viewport centre.
+- Removed "You're Hired!" heading from result screen (misleading at a careers fair); kept congratulations sub-message.
+- Updated hires network tagline: "Building Foundations. Launching Futures."
+- Updated track selection prompt: "What's your area of interest?" (EN + AR).
+- Added "Explore your skills." subtitle to controller idle screen.
+- HR Q9 converted to visual question — images added to public folder, DB updated for EN + AR rows.
+- A&D Q6 Arabic row corrected — was still showing text answers; now uses same image URLs as English row.
+- Established that Supabase SQL access requires a personal access token (`sbp_…`) from supabase.com/dashboard/account/tokens — the service role key cannot run DDL.
+
+*Last updated: 2026-08-04*
