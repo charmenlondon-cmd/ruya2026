@@ -54,16 +54,15 @@ export function FinalResultScreen({ session, language }: Props) {
         {strings.finalScore(session.score)}
       </p>
 
-      {/* Outcome heading — only shown for non-hired result */}
+      {/* Outcome message */}
+      <p className="text-2xl text-white/80 text-center max-w-2xl">
+        {isHired ? strings.hiredMessage : strings.getBackMessage}
+      </p>
+
       {!isHired && (
-        <>
-          <h2 className="text-5xl font-bold text-center text-white">
-            {strings.wellGetBack}
-          </h2>
-          <p className="text-2xl text-white/80 text-center max-w-2xl">
-            {strings.getBackMessage}
-          </p>
-        </>
+        <h2 className="text-5xl font-bold text-center text-white">
+          {strings.wellGetBack}
+        </h2>
       )}
     </div>
   )
