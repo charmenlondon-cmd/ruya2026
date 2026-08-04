@@ -12,14 +12,13 @@ interface UseSessionResult {
   error: string | null
 }
 
-export function useSession(): UseSessionResult {
+export function useSession(lane: string): UseSessionResult {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
   const sessionRef = useRef<Session | null>(null)
 
-  // Keep ref in sync with state to avoid stale closures in realtime handler
   useEffect(() => {
     sessionRef.current = session
   }, [session])
@@ -29,7 +28,7 @@ export function useSession(): UseSessionResult {
 
     async function init() {
       try {
-        const active = await getActiveSession()
+        const active = await getActiveSession(lane)
         setSession(active)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load session')
@@ -38,20 +37,26 @@ export function useSession(): UseSessionResult {
       }
 
       const handleChange = (payload: RealtimePostgresChangesPayload<Session>) => {
+        const incoming = payload.new as Session
+        // Client-side guard: ignore events that belong to a different lane.
+        // This backstops the server-side Realtime filter in case REPLICA IDENTITY
+        // FULL is not set (without it, UPDATE events bypass the filter).
+        if (incoming?.lane && incoming.lane !== lane) return
+
         if (payload.eventType === 'INSERT') {
-          setSession(payload.new as Session)
+          setSession(incoming)
         } else if (payload.eventType === 'UPDATE') {
-          if (sessionRef.current && (payload.new as Session).id === sessionRef.current.id) {
-            setSession(payload.new as Session)
+          if (sessionRef.current && incoming.id === sessionRef.current.id) {
+            setSession(incoming)
           }
         }
       }
 
-      channel = supabase.channel('game-session')
+      channel = supabase.channel(`game-session-${lane}`)
       channel
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'sessions' },
+          { event: '*', schema: 'public', table: 'sessions', filter: `lane=eq.${lane}` },
           handleChange
         )
         .subscribe()
@@ -64,7 +69,7 @@ export function useSession(): UseSessionResult {
         supabase.removeChannel(channel)
       }
     }
-  }, [])
+  }, [lane])
 
   return { session, loading, error }
 }

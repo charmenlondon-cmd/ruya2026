@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createSession, updateSession } from '@/lib/session'
 import { useSession } from '@/hooks/useSession'
 import { t } from '@/lib/i18n'
@@ -28,14 +29,16 @@ function IdleScreen({ session }: { session: Session }) {
   )
 }
 
-export default function ControllerPage() {
-  const [creatingSession, setCreatingSession] = useState(false)
-  const { session, loading, error } = useSession()
+function ControllerInner() {
+  const searchParams = useSearchParams()
+  const lane = searchParams.get('lane') ?? '1'
 
-  // Create session once when there is none
+  const [creatingSession, setCreatingSession] = useState(false)
+  const { session, loading, error } = useSession(lane)
+
   if (!loading && session === null && !creatingSession && !error) {
     setCreatingSession(true)
-    createSession().catch(console.error)
+    createSession(lane).catch(console.error)
   }
 
   const language: Language = session?.language ?? 'en'
@@ -68,7 +71,7 @@ export default function ControllerPage() {
           case 'track_select':
             return <TrackSelectScreen session={session} language={language} />
           case 'question_active':
-          case 'answer_submitted': // legacy — kept for graceful handling if DB has stale state
+          case 'answer_submitted':
             return <QuizScreen session={session} language={language} />
           case 'final_result':
             return <FinalResultScreen session={session} language={language} />
@@ -77,5 +80,17 @@ export default function ControllerPage() {
         }
       })()}
     </div>
+  )
+}
+
+export default function ControllerPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center p-6">
+        <div className="w-12 h-12 rounded-full border-4 border-white border-t-transparent animate-spin" />
+      </div>
+    }>
+      <ControllerInner />
+    </Suspense>
   )
 }

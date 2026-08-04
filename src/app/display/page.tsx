@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useSession } from '@/hooks/useSession'
 import { useHires } from '@/hooks/useHires'
 import { WaitingScreen } from '@/components/display/WaitingScreen'
@@ -10,8 +11,11 @@ import { ScreensaverScreen } from '@/components/display/ScreensaverScreen'
 import HiredNetworkScreen from '@/components/display/HiredNetworkScreen'
 import type { Language } from '@/types/database'
 
-export default function DisplayPage() {
-  const { session, loading, error } = useSession()
+function DisplayInner() {
+  const searchParams = useSearchParams()
+  const lane = searchParams.get('lane') ?? '1'
+
+  const { session, loading, error } = useSession(lane)
   const hires = useHires()
   const [showHiredNetwork, setShowHiredNetwork] = useState(false)
 
@@ -68,5 +72,17 @@ export default function DisplayPage() {
         }
       })()}
     </div>
+  )
+}
+
+export default function DisplayPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[calc(100vh-56px)] flex items-center justify-center">
+        <div className="animate-spin border-4 border-white border-t-transparent rounded-full w-16 h-16" />
+      </div>
+    }>
+      <DisplayInner />
+    </Suspense>
   )
 }

@@ -5,10 +5,11 @@ import type { Database } from '@/types/database'
 
 type SessionUpdate = Database['public']['Tables']['sessions']['Update']
 
-export async function getActiveSession(): Promise<Session | null> {
+export async function getActiveSession(lane: string): Promise<Session | null> {
   const { data, error } = await supabase
     .from('sessions')
     .select('*')
+    .eq('lane', lane)
     .order('created_at', { ascending: false })
     .limit(1)
     .single()
@@ -20,8 +21,9 @@ export async function getActiveSession(): Promise<Session | null> {
   return data as Session
 }
 
-export async function createSession(): Promise<Session> {
+export async function createSession(lane: string): Promise<Session> {
   const insertPayload: Database['public']['Tables']['sessions']['Insert'] = {
+    lane,
     state: 'idle' as SessionState,
     language: null,
     player_name: null,

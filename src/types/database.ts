@@ -28,6 +28,7 @@ export type Track =
 
 export type Session = {
   id: string
+  lane: string
   state: SessionState
   language: Language | null
   player_name: string | null
