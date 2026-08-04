@@ -72,6 +72,13 @@ export function FinalResultScreen({ session, language }: Props) {
           {session.player_name}
         </p>
 
+        {/* Track */}
+        {session.track && (
+          <p className="text-aaah-dark-teal text-base text-center opacity-70">
+            {strings.trackName(session.track)}
+          </p>
+        )}
+
         {/* Final score */}
         <p
           className={`text-6xl font-bold ${
