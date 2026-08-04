@@ -18,6 +18,7 @@ function IdleScreen({ session }: { session: Session }) {
   const strings = t(lang)
   return (
     <div className="flex flex-col items-center justify-center gap-8">
+      <p className="text-2xl text-white/70">Explore your skills.</p>
       <h1 className="text-4xl font-bold text-white">{strings.tapToStart}</h1>
       <button
         onClick={() => updateSession(session.id, { state: 'language_select' })}
