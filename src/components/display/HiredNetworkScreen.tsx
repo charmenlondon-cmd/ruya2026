@@ -153,8 +153,8 @@ export default function HiredNetworkScreen({ hires }: Props) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logos/aaah-logo-white.png" alt="Abdulla Al Arif Holding" style={{ width: 200, opacity: 0.9 }}
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-        <p style={{ color: '#ffffff', fontSize: 18, fontWeight: 600, marginTop: 14, letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.75, textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
-          Our Future Leaders
+        <p style={{ color: '#ffffff', fontSize: 26, fontWeight: 600, marginTop: 14, letterSpacing: '0.06em', textTransform: 'uppercase', opacity: 0.85, textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
+          Building Foundations. Launching Futures.
         </p>
       </div>
 
