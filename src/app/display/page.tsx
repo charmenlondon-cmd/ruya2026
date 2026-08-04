@@ -43,11 +43,13 @@ function DisplayInner() {
         <p className="text-white text-xl text-center p-8">Error: {error}</p>
       )}
 
-      {!loading && !error && !session && (
-        <p className="text-white text-xl text-center p-8">Waiting for session…</p>
-      )}
+      {!loading && !error && (() => {
+        if (!session) {
+          return showHiredNetwork
+            ? <HiredNetworkScreen hires={hires} />
+            : <ScreensaverScreen />
+        }
 
-      {!loading && !error && session && (() => {
         switch (session.state) {
           case 'language_select':
           case 'avatar_select':
