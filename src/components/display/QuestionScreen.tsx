@@ -91,12 +91,15 @@ export function QuestionScreen({ session, language }: Props) {
       {/* Main content */}
       <div className="flex-1 flex flex-col items-center justify-center gap-8 px-12 py-8 relative">
         {session.track && <TrackAnimation track={session.track} />}
-        {/* Question card */}
-        <div className="bg-white/90 rounded-3xl p-10 w-full max-w-5xl relative z-10 overflow-visible">
+        {/* Wrapper gives TrackCardDecoration a clean relative anchor above the card */}
+        <div className="relative w-full max-w-5xl z-10">
           {session.track && <TrackCardDecoration track={session.track} />}
-          <p className="text-aaah-dark-teal text-3xl font-semibold text-center leading-relaxed">
-            {question.question_text}
-          </p>
+          {/* Question card */}
+          <div className="bg-white/90 rounded-3xl p-10 w-full">
+            <p className="text-aaah-dark-teal text-3xl font-semibold text-center leading-relaxed">
+              {question.question_text}
+            </p>
+          </div>
         </div>
 
         {/* Answer options — always LTR visual order for A/B/C */}
