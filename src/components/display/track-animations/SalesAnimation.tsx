@@ -5,8 +5,8 @@ import { useLottieFile } from './useLottieFile'
 
 // Sales_1: 500×500  (1:1)   — background
 // Sales_2: 1300×1000 (13:10) — card decoration
-const W_BG  = 200
-const H_BG  = 200
+const W_BG  = 160
+const H_BG  = 160
 
 const W_DEC = 200
 const H_DEC = Math.round(W_DEC * (1000 / 1300)) // 154
