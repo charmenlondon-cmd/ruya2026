@@ -8,11 +8,11 @@ import { FinanceAnimation, FinanceCardDecoration } from './FinanceAnimation'
 import { ArchitectureAnimation, ArchitectureCardDecoration } from './ArchitectureAnimation'
 
 const GENERIC_FILES: Partial<Record<Track, [string, string]>> = {
-  'Architecture & Design':        ['/animations/A%26D_1.json',         '/animations/A%26D_2.json'],
+  'Architecture & Design':        ['/animations/AD_1.json',            '/animations/AD_2.json'],
   'Finance':                      ['/animations/Finance_1.json',        '/animations/Finance_2.json'],
   'Human Resources':              ['/animations/HR_1.json',             '/animations/HR_2.json'],
   'IT':                           ['/animations/IT_1.json',             '/animations/IT_2.json'],
-  'Legal & Compliance':           ['/animations/L%26C_1.json',          '/animations/L%26C_2.json'],
+  'Legal & Compliance':           ['/animations/LC_1.json',             '/animations/LC_2.json'],
   'Marketing':                    ['/animations/Marketing_1.json',       '/animations/Marketing_2.json'],
   'Operations & Supply Chain':    ['/animations/Operations_1.json',      '/animations/Operations_2.json'],
   'Project Management':           ['/animations/PM_1.json',             '/animations/PM_2.json'],
