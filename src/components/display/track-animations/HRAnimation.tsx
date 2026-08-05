@@ -33,7 +33,7 @@ export function HRCardDecoration() {
   if (!anim2) return null
 
   return (
-    <div className="absolute pointer-events-none" style={{ bottom: 'calc(100% - 2px)', left: 0, zIndex: 10 }}>
+    <div className="absolute pointer-events-none" style={{ bottom: 'calc(100% - 1px)', left: 0, zIndex: 10 }}>
       <Lottie
         animationData={anim2}
         loop
