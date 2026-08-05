@@ -21,7 +21,7 @@ export function LCAnimation() {
           animationData={anim1}
           loop
           className="absolute opacity-80"
-          style={{ width: W_BG, height: H_BG, bottom: '24px', right: 'calc(50% - 512px)' }}
+          style={{ width: W_BG, height: H_BG, bottom: '24px', right: 'calc(50% - 527px)' }}
         />
       )}
     </div>
@@ -33,7 +33,7 @@ export function LCCardDecoration() {
   if (!anim2) return null
 
   return (
-    <div className="absolute pointer-events-none" style={{ bottom: '100%', left: 0, zIndex: 10 }}>
+    <div className="absolute pointer-events-none" style={{ bottom: 'calc(100% - 10px)', left: 0, zIndex: 10 }}>
       <Lottie
         animationData={anim2}
         loop
