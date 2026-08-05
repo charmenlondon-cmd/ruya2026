@@ -21,7 +21,7 @@ export function EngineeringAnimation() {
           animationData={anim1}
           loop
           className="absolute bottom-0 opacity-80"
-          style={{ width: W, height: H1, right: 'calc(50% - 472px)' }}
+          style={{ width: W, height: H1, right: 'calc(50% - 492px)' }}
         />
       )}
       {/* Rests on top of the question card — left edge aligned to left margin of text boxes */}
