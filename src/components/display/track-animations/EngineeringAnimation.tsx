@@ -3,19 +3,16 @@
 import Lottie from 'lottie-react'
 import { useLottieFile } from './useLottieFile'
 
-// Engineering_1: 1920×1080 (16:9) — ground-level scene, sits at the bottom
-// Engineering_2: 1920×800 (2.4:1)  — sits above / resting on the question card
 const W = 200
 const H1 = Math.round(W * (1080 / 1920)) // 113
 const H2 = Math.round(W * (800 / 1920))  // 83
 
+// Background animation — _1 runs along the bottom of the content area
 export function EngineeringAnimation() {
   const anim1 = useLottieFile('/animations/Engineering_1.json')
-  const anim2 = useLottieFile('/animations/Engineering_2.json')
 
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-      {/* Runs along the bottom — right edge aligned to right margin of text boxes */}
       {anim1 && (
         <Lottie
           animationData={anim1}
@@ -24,15 +21,23 @@ export function EngineeringAnimation() {
           style={{ width: W, height: H1, right: 'calc(50% - 492px)' }}
         />
       )}
-      {/* Rests on top of the question card — left edge aligned to left margin of text boxes */}
-      {anim2 && (
-        <Lottie
-          animationData={anim2}
-          loop
-          className="absolute opacity-80"
-          style={{ width: W, height: H2, bottom: '74.5%', left: 'calc(50% - 512px)' }}
-        />
-      )}
+    </div>
+  )
+}
+
+// Card decoration — _2 is anchored to the top-left corner of the question card
+export function EngineeringCardDecoration() {
+  const anim2 = useLottieFile('/animations/Engineering_2.json')
+  if (!anim2) return null
+
+  return (
+    <div className="absolute pointer-events-none" style={{ bottom: '100%', left: 0, zIndex: 10 }}>
+      <Lottie
+        animationData={anim2}
+        loop
+        className="opacity-80"
+        style={{ width: W, height: H2 }}
+      />
     </div>
   )
 }

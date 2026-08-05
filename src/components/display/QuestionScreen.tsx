@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { getQuestionsForTrack } from '@/lib/questions'
 import { t } from '@/lib/i18n'
-import { TrackAnimation } from '@/components/display/track-animations'
+import { TrackAnimation, TrackCardDecoration } from '@/components/display/track-animations'
 import type { Language, Session, Question, CorrectAnswer } from '@/types/database'
 
 interface Props {
@@ -92,7 +92,8 @@ export function QuestionScreen({ session, language }: Props) {
       <div className="flex-1 flex flex-col items-center justify-center gap-8 px-12 py-8 relative">
         {session.track && <TrackAnimation track={session.track} />}
         {/* Question card */}
-        <div className="bg-white/90 rounded-3xl p-10 w-full max-w-5xl relative z-10">
+        <div className="bg-white/90 rounded-3xl p-10 w-full max-w-5xl relative z-10 overflow-visible">
+          {session.track && <TrackCardDecoration track={session.track} />}
           <p className="text-aaah-dark-teal text-3xl font-semibold text-center leading-relaxed">
             {question.question_text}
           </p>
