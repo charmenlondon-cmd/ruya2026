@@ -21,8 +21,8 @@ export function ArchitectureAnimation() {
         <Lottie
           animationData={anim2}
           loop
-          className="absolute bottom-0 opacity-80"
-          style={{ width: W_BG, height: H_BG, right: 'calc(50% - 492px)' }}
+          className="absolute opacity-80"
+          style={{ width: W_BG, height: H_BG, bottom: '24px', right: 'calc(50% - 512px)' }}
         />
       )}
     </div>
