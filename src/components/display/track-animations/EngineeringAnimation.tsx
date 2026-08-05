@@ -5,9 +5,9 @@ import { useLottieFile } from './useLottieFile'
 
 // Engineering_1: 1920×1080 (16:9) — ground-level scene, sits at the bottom
 // Engineering_2: 1920×800 (2.4:1)  — sits above / resting on the question card
-const W = 800
-const H1 = Math.round(W * (1080 / 1920)) // 450
-const H2 = Math.round(W * (800 / 1920))  // 333
+const W = 200
+const H1 = Math.round(W * (1080 / 1920)) // 113
+const H2 = Math.round(W * (800 / 1920))  // 83
 
 export function EngineeringAnimation() {
   const anim1 = useLottieFile('/animations/Engineering_1.json')

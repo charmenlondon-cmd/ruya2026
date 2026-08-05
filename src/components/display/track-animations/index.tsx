@@ -28,14 +28,14 @@ function GenericTrackAnimation({ file1, file2 }: { file1: string; file2: string 
         <Lottie
           animationData={anim1}
           loop
-          className="absolute bottom-0 right-0 w-[420px] h-[420px] opacity-75"
+          className="absolute bottom-0 right-0 w-[105px] h-[105px] opacity-75"
         />
       )}
       {anim2 && (
         <Lottie
           animationData={anim2}
           loop
-          className="absolute bottom-0 left-0 w-[420px] h-[420px] opacity-75"
+          className="absolute bottom-0 left-0 w-[105px] h-[105px] opacity-75"
         />
       )}
     </div>
