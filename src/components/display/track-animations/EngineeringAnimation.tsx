@@ -30,7 +30,7 @@ export function EngineeringAnimation() {
           animationData={anim2}
           loop
           className="absolute opacity-80"
-          style={{ width: W, height: H2, bottom: '76%', left: 'calc(50% - 512px)' }}
+          style={{ width: W, height: H2, bottom: '74%', left: 'calc(50% - 512px)' }}
         />
       )}
     </div>
