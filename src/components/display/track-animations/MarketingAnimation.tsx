@@ -5,11 +5,11 @@ import { useLottieFile } from './useLottieFile'
 
 // Marketing_1: 500×500 (1:1) — background
 // Marketing_2: 1000×1000 (1:1) — card decoration
-const W_BG  = 200
-const H_BG  = 200
+const W_BG  = 120
+const H_BG  = 120
 
-const W_DEC = 200
-const H_DEC = 200
+const W_DEC = 120
+const H_DEC = 120
 
 export function MarketingAnimation() {
   const anim1 = useLottieFile('/animations/Marketing_1.json')
