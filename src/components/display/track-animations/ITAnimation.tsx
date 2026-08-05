@@ -33,7 +33,7 @@ export function ITCardDecoration() {
   if (!anim1) return null
 
   return (
-    <div className="absolute pointer-events-none" style={{ bottom: 'calc(100% - 23px)', left: 0, zIndex: 10 }}>
+    <div className="absolute pointer-events-none" style={{ bottom: 'calc(100% - 25px)', left: 0, zIndex: 10 }}>
       <Lottie
         animationData={anim1}
         loop
