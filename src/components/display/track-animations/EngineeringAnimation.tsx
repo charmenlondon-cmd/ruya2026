@@ -15,22 +15,22 @@ export function EngineeringAnimation() {
 
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-      {/* Runs along the bottom, behind/under the answer cards */}
+      {/* Runs along the bottom — right edge aligned to right margin of text boxes */}
       {anim1 && (
         <Lottie
           animationData={anim1}
           loop
-          className="absolute bottom-0 left-0 opacity-80"
-          style={{ width: W, height: H1 }}
+          className="absolute bottom-0 opacity-80"
+          style={{ width: W, height: H1, right: 'calc(50% - 512px)' }}
         />
       )}
-      {/* Rests on top of the question card — bottom edge ≈ question card top */}
+      {/* Rests on top of the question card — left edge aligned to left margin of text boxes */}
       {anim2 && (
         <Lottie
           animationData={anim2}
           loop
-          className="absolute right-0 opacity-80"
-          style={{ width: W, height: H2, bottom: 'calc(72% - 20px)' }}
+          className="absolute opacity-80"
+          style={{ width: W, height: H2, bottom: 'calc(72% - 20px)', left: 'calc(50% - 512px)' }}
         />
       )}
     </div>
