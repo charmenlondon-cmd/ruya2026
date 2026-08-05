@@ -9,6 +9,7 @@ import { ArchitectureAnimation, ArchitectureCardDecoration } from './Architectur
 import { HRAnimation, HRCardDecoration } from './HRAnimation'
 import { ITAnimation, ITCardDecoration } from './ITAnimation'
 import { LCAnimation, LCCardDecoration } from './LCAnimation'
+import { MarketingAnimation, MarketingCardDecoration } from './MarketingAnimation'
 
 const GENERIC_FILES: Partial<Record<Track, [string, string]>> = {
   'Architecture & Design':        ['/animations/AD_1.json',            '/animations/AD_2.json'],
@@ -54,6 +55,7 @@ export function TrackAnimation({ track }: { track: Track }) {
   if (track === 'Human Resources') return <HRAnimation />
   if (track === 'IT') return <ITAnimation />
   if (track === 'Legal & Compliance') return <LCAnimation />
+  if (track === 'Marketing') return <MarketingAnimation />
 
   const files = GENERIC_FILES[track]
   if (!files) return null
@@ -68,5 +70,6 @@ export function TrackCardDecoration({ track }: { track: Track }) {
   if (track === 'Human Resources') return <HRCardDecoration />
   if (track === 'IT') return <ITCardDecoration />
   if (track === 'Legal & Compliance') return <LCCardDecoration />
+  if (track === 'Marketing') return <MarketingCardDecoration />
   return null
 }
