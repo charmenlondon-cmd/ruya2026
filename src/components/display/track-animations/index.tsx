@@ -1,12 +1,12 @@
 'use client'
 
 import Lottie from 'lottie-react'
-import { useEffect, useState } from 'react'
 import type { Track } from '@/types/database'
+import { useLottieFile } from './useLottieFile'
+import { EngineeringAnimation } from './EngineeringAnimation'
 
-// & must be percent-encoded in URLs even though it's fine in filenames
-const TRACK_FILES: Record<Track, [string, string]> = {
-  'Engineering':                  ['/animations/Engineering_1.json',  '/animations/Engineering_2.json'],
+// Tracks that use the default two-corner layout: _1 bottom-right, _2 bottom-left
+const GENERIC_FILES: Partial<Record<Track, [string, string]>> = {
   'Architecture & Design':        ['/animations/A%26D_1.json',         '/animations/A%26D_2.json'],
   'Finance':                      ['/animations/Finance_1.json',        '/animations/Finance_2.json'],
   'Human Resources':              ['/animations/HR_1.json',             '/animations/HR_2.json'],
@@ -18,18 +18,7 @@ const TRACK_FILES: Record<Track, [string, string]> = {
   'Sales & Business Development': ['/animations/Sales_1.json',           '/animations/Sales_2.json'],
 }
 
-function useLottieFile(path: string) {
-  const [data, setData] = useState<object | null>(null)
-  useEffect(() => {
-    fetch(path)
-      .then(r => { if (!r.ok) throw new Error(); return r.json() })
-      .then(setData)
-      .catch(() => {})
-  }, [path])
-  return data
-}
-
-function TrackAnimationPlayer({ file1, file2 }: { file1: string; file2: string }) {
+function GenericTrackAnimation({ file1, file2 }: { file1: string; file2: string }) {
   const anim1 = useLottieFile(file1)
   const anim2 = useLottieFile(file2)
 
@@ -54,7 +43,9 @@ function TrackAnimationPlayer({ file1, file2 }: { file1: string; file2: string }
 }
 
 export function TrackAnimation({ track }: { track: Track }) {
-  const files = TRACK_FILES[track]
+  if (track === 'Engineering') return <EngineeringAnimation />
+
+  const files = GENERIC_FILES[track]
   if (!files) return null
-  return <TrackAnimationPlayer file1={files[0]} file2={files[1]} />
+  return <GenericTrackAnimation file1={files[0]} file2={files[1]} />
 }

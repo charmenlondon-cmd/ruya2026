@@ -1,0 +1,38 @@
+'use client'
+
+import Lottie from 'lottie-react'
+import { useLottieFile } from './useLottieFile'
+
+// Engineering_1: 1920×1080 (16:9) — ground-level scene, sits at the bottom
+// Engineering_2: 1920×800 (2.4:1)  — sits above / resting on the question card
+const W = 800
+const H1 = Math.round(W * (1080 / 1920)) // 450
+const H2 = Math.round(W * (800 / 1920))  // 333
+
+export function EngineeringAnimation() {
+  const anim1 = useLottieFile('/animations/Engineering_1.json')
+  const anim2 = useLottieFile('/animations/Engineering_2.json')
+
+  return (
+    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
+      {/* Runs along the bottom, behind/under the answer cards */}
+      {anim1 && (
+        <Lottie
+          animationData={anim1}
+          loop
+          className="absolute bottom-0 left-0 opacity-80"
+          style={{ width: W, height: H1 }}
+        />
+      )}
+      {/* Rests on top of the question card — bottom edge ≈ question card top */}
+      {anim2 && (
+        <Lottie
+          animationData={anim2}
+          loop
+          className="absolute right-0 opacity-80"
+          style={{ width: W, height: H2, bottom: 'calc(72% - 20px)' }}
+        />
+      )}
+    </div>
+  )
+}
