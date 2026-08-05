@@ -4,6 +4,7 @@ import Lottie from 'lottie-react'
 import type { Track } from '@/types/database'
 import { useLottieFile } from './useLottieFile'
 import { EngineeringAnimation, EngineeringCardDecoration } from './EngineeringAnimation'
+import { FinanceAnimation, FinanceCardDecoration } from './FinanceAnimation'
 
 const GENERIC_FILES: Partial<Record<Track, [string, string]>> = {
   'Architecture & Design':        ['/animations/A%26D_1.json',         '/animations/A%26D_2.json'],
@@ -44,6 +45,7 @@ function GenericTrackAnimation({ file1, file2 }: { file1: string; file2: string 
 // Rendered as an absolute overlay in the content area (behind cards)
 export function TrackAnimation({ track }: { track: Track }) {
   if (track === 'Engineering') return <EngineeringAnimation />
+  if (track === 'Finance') return <FinanceAnimation />
 
   const files = GENERIC_FILES[track]
   if (!files) return null
@@ -53,5 +55,6 @@ export function TrackAnimation({ track }: { track: Track }) {
 // Rendered inside the question card div — always anchored to the card's top-left
 export function TrackCardDecoration({ track }: { track: Track }) {
   if (track === 'Engineering') return <EngineeringCardDecoration />
+  if (track === 'Finance') return <FinanceCardDecoration />
   return null
 }
