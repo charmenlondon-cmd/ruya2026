@@ -32,7 +32,7 @@ export function FinanceCardDecoration() {
   if (!anim2) return null
 
   return (
-    <div className="absolute pointer-events-none" style={{ bottom: 'calc(100% - 15px)', left: 0, zIndex: 10 }}>
+    <div className="absolute pointer-events-none" style={{ bottom: 'calc(100% - 30px)', left: 0, zIndex: 10 }}>
       <Lottie
         animationData={anim2}
         loop
