@@ -5,8 +5,8 @@ import { useLottieFile } from './useLottieFile'
 
 const W_BG = 200
 const H_BG = Math.round(W_BG * (1080 / 1920)) // 113 — background (16:9)
-const W_DEC = 100
-const H_DEC = 100                              // 100 — card decoration (square, kept small to sit close to card)
+const W_DEC = 130
+const H_DEC = 130                              // card decoration (square)
 
 // Background animation — _1 runs along the bottom
 export function FinanceAnimation() {
