@@ -148,8 +148,8 @@ export default function HiredNetworkScreen({ hires }: Props) {
       ref={containerRef}
       style={{ position: 'relative', flex: 1, background: '#020617', overflow: 'hidden' }}
     >
-      {/* Centre logo + tagline — absolute within the container so it matches the cards' coordinate space */}
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none', zIndex: 1 }}>
+      {/* Centre logo + tagline — full-bleed overlay, flexbox-centred so it's immune to container width quirks */}
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', pointerEvents: 'none' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logos/aaah-logo-white.png" alt="Abdulla Al Arif Holding" style={{ width: 200, opacity: 0.9 }}
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
