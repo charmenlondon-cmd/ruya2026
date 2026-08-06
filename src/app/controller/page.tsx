@@ -21,7 +21,7 @@ function IdleScreen({ session }: { session: Session }) {
       <p className="text-4xl font-bold text-white/70">Explore your skills.</p>
       <button
         onClick={() => updateSession(session.id, { state: 'language_select' })}
-        className="bg-aaah-light-teal text-white font-normal rounded-2xl px-12 py-6 text-xl hover:bg-aaah-dark-teal active:scale-95 transition-all min-h-16"
+        className="bg-aaah-light-teal text-white font-bold rounded-2xl px-12 py-6 text-xl hover:bg-aaah-dark-teal active:scale-95 transition-all min-h-16"
       >
         {strings.tapToStart}
       </button>
