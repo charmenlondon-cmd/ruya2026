@@ -18,13 +18,12 @@ function IdleScreen({ session }: { session: Session }) {
   const strings = t(lang)
   return (
     <div className="flex flex-col items-center justify-center gap-8">
-      <p className="text-2xl text-white/70">Explore your skills.</p>
-      <h1 className="text-4xl font-bold text-white">{strings.tapToStart}</h1>
+      <p className="text-4xl font-bold text-white/70">Explore your skills.</p>
       <button
         onClick={() => updateSession(session.id, { state: 'language_select' })}
-        className="bg-aaah-light-teal text-white font-semibold rounded-2xl px-12 py-6 text-xl hover:bg-aaah-dark-teal active:scale-95 transition-all min-h-16"
+        className="bg-aaah-light-teal text-white font-normal rounded-2xl px-12 py-6 text-xl hover:bg-aaah-dark-teal active:scale-95 transition-all min-h-16"
       >
-        {strings.start}
+        {strings.tapToStart}
       </button>
     </div>
   )
