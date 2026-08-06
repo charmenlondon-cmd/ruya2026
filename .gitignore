@@ -42,3 +42,16 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Project assets (not part of the app build)
+/AAAH Branding/
+/Architecture & Design - Q6 Images/
+/Avatars/
+/HR - Q9 Images/
+/Legal & Compliance - Q6 Images/
+/Marketing - Q9 Images/
+/Operations - Q4 Images/
+/Career Fair Game.md
+/Question Matrix.csv
+/Question Matrix Arabic.csv
+/Question Matrix.xlsx
