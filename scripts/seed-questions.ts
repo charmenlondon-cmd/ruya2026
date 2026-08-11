@@ -67,6 +67,27 @@ type QuestionInsert = {
   correct_answer: 'A' | 'B' | 'C'
 }
 
+type CsvRow = {
+  Track: string
+  Question_no: string
+  Question: string
+  Answer_A: string
+  Answer_B: string
+  Answer_C: string
+  'Correct Answer': string
+}
+
+function readCsvRows(csvPath: string): CsvRow[] {
+  const rawBuffer = fs.readFileSync(csvPath)
+  let csvContent: string
+  if (rawBuffer[0] === 0xEF && rawBuffer[1] === 0xBB && rawBuffer[2] === 0xBF) {
+    csvContent = rawBuffer.slice(3).toString('utf-8')
+  } else {
+    csvContent = rawBuffer.toString('utf-8')
+  }
+  return parse(csvContent, { columns: true, skip_empty_lines: true }) as CsvRow[]
+}
+
 async function main() {
   console.log('Starting question seed...')
 
@@ -82,32 +103,10 @@ async function main() {
     console.log('Storage bucket "question-images" created.')
   }
 
-  // Read and parse CSV
-  const csvPath = path.resolve('Question Matrix.csv')
-  const rawBuffer = fs.readFileSync(csvPath)
-
-  // Strip UTF-8 BOM if present (EF BB BF)
-  let csvContent: string
-  if (rawBuffer[0] === 0xEF && rawBuffer[1] === 0xBB && rawBuffer[2] === 0xBF) {
-    csvContent = rawBuffer.slice(3).toString('utf-8')
-  } else {
-    csvContent = rawBuffer.toString('utf-8')
-  }
-
-  const rows = parse(csvContent, {
-    columns: true,
-    skip_empty_lines: true,
-  }) as Array<{
-    Track: string
-    Question_no: string
-    Question: string
-    Answer_A: string
-    Answer_B: string
-    Answer_C: string
-    'Correct Answer': string
-  }>
-
-  console.log(`Parsed ${rows.length} rows from CSV.`)
+  // Read both CSVs
+  const enRows = readCsvRows(path.resolve('Question Matrix.csv'))
+  const arRows = readCsvRows(path.resolve('Question Matrix Arabic.csv'))
+  console.log(`Parsed ${enRows.length} English rows, ${arRows.length} Arabic rows.`)
 
   // Clear existing questions
   console.log('Clearing existing questions...')
@@ -137,51 +136,64 @@ async function main() {
     return { text: value.trim(), image_url: null }
   }
 
-  // Build inserts
-  const inserts: QuestionInsert[] = []
+  async function buildInserts(rows: CsvRow[], forcedLanguage: 'en' | 'ar' | null): Promise<QuestionInsert[]> {
+    const inserts: QuestionInsert[] = []
+    for (const row of rows) {
+      const originalTrack = row.Track.trim()
 
-  for (const row of rows) {
-    const originalTrack = row.Track.trim()
+      // If forcedLanguage is set, use it; otherwise detect via " (AR)" suffix (legacy combined CSV)
+      let language: 'en' | 'ar'
+      let trackKey: string
+      if (forcedLanguage) {
+        language = forcedLanguage
+        trackKey = originalTrack
+      } else {
+        const isArabic = originalTrack.endsWith(' (AR)')
+        language = isArabic ? 'ar' : 'en'
+        trackKey = isArabic ? originalTrack.slice(0, -5).trim() : originalTrack
+      }
 
-    // Detect language
-    const isArabic = originalTrack.endsWith(' (AR)')
-    const language: 'en' | 'ar' = isArabic ? 'ar' : 'en'
+      const normalizedTrack = TRACK_MAP[trackKey]
+      if (!normalizedTrack) {
+        console.warn(`  Unknown track: "${trackKey}" (original: "${originalTrack}") — skipping row.`)
+        continue
+      }
 
-    // Strip " (AR)" suffix for normalization
-    const trackKey = isArabic ? originalTrack.slice(0, -5).trim() : originalTrack
+      const answerA = await resolveAnswer(row.Answer_A)
+      const answerB = await resolveAnswer(row.Answer_B)
+      const answerC = await resolveAnswer(row.Answer_C)
 
-    const normalizedTrack = TRACK_MAP[trackKey]
-    if (!normalizedTrack) {
-      console.warn(`  Unknown track: "${trackKey}" (original: "${originalTrack}") — skipping row.`)
-      continue
+      const correctAnswer = (row['Correct Answer'] || '').trim().toUpperCase() as 'A' | 'B' | 'C'
+      if (!['A', 'B', 'C'].includes(correctAnswer)) {
+        console.warn(`  Invalid correct answer "${correctAnswer}" for ${normalizedTrack} Q${row.Question_no} — skipping.`)
+        continue
+      }
+
+      inserts.push({
+        track: normalizedTrack,
+        question_no: parseInt(row.Question_no, 10),
+        language,
+        question_text: row.Question.trim(),
+        answer_a_text: answerA.text,
+        answer_a_image_url: answerA.image_url,
+        answer_b_text: answerB.text,
+        answer_b_image_url: answerB.image_url,
+        answer_c_text: answerC.text,
+        answer_c_image_url: answerC.image_url,
+        correct_answer: correctAnswer,
+      })
     }
-
-    const answerA = await resolveAnswer(row.Answer_A)
-    const answerB = await resolveAnswer(row.Answer_B)
-    const answerC = await resolveAnswer(row.Answer_C)
-
-    const correctAnswer = (row['Correct Answer'] || '').trim().toUpperCase() as 'A' | 'B' | 'C'
-    if (!['A', 'B', 'C'].includes(correctAnswer)) {
-      console.warn(`  Invalid correct answer "${correctAnswer}" for ${normalizedTrack} Q${row.Question_no} — skipping.`)
-      continue
-    }
-
-    inserts.push({
-      track: normalizedTrack,
-      question_no: parseInt(row.Question_no, 10),
-      language,
-      question_text: row.Question.trim(),
-      answer_a_text: answerA.text,
-      answer_a_image_url: answerA.image_url,
-      answer_b_text: answerB.text,
-      answer_b_image_url: answerB.image_url,
-      answer_c_text: answerC.text,
-      answer_c_image_url: answerC.image_url,
-      correct_answer: correctAnswer,
-    })
+    return inserts
   }
 
-  console.log(`Built ${inserts.length} question inserts. Starting batch insert...`)
+  // Build inserts from both CSVs
+  console.log('Processing English CSV...')
+  const enInserts = await buildInserts(enRows, 'en')
+  console.log('Processing Arabic CSV...')
+  const arInserts = await buildInserts(arRows, 'ar')
+  const inserts = [...enInserts, ...arInserts]
+
+  console.log(`Built ${inserts.length} question inserts (${enInserts.length} EN + ${arInserts.length} AR). Starting batch insert...`)
 
   // Batch insert in chunks of 50
   const CHUNK_SIZE = 50
