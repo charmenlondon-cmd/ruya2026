@@ -6,19 +6,26 @@ import type { Database } from '@/types/database'
 type SessionUpdate = Database['public']['Tables']['sessions']['Update']
 
 export async function getActiveSession(lane: string): Promise<Session | null> {
-  const { data, error } = await supabase
-    .from('sessions')
-    .select('*')
-    .eq('lane', lane)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single()
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 5000)
 
-  if (error || !data) {
+  try {
+    const { data, error } = await supabase
+      .from('sessions')
+      .select('*')
+      .eq('lane', lane)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .abortSignal(controller.signal)
+      .single()
+
+    if (error || !data) return null
+    return data as Session
+  } catch {
     return null
+  } finally {
+    clearTimeout(timeout)
   }
-
-  return data as Session
 }
 
 export async function createSession(lane: string): Promise<Session> {
