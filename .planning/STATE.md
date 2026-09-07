@@ -11,7 +11,7 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 Phase: 7 of 7 — COMPLETE
 Status: SHIPPED — all 7 phases done. App live at https://ruya2026.vercel.app
-Last activity: 2026-08-03 — Phase 7 complete + post-deploy fixes (see below)
+Last activity: 2026-09-07 — Applied Sana's Arabic language review to CSV + Supabase (22 rows)
 
 Progress: ████████████████████ 100%
 
@@ -82,7 +82,8 @@ Progress: ████████████████████ 100%
 
 ### Deferred Issues
 
-None.
+- **Finance Q9 (Arabic)** — Sana's rewritten question text is truncated in `Ru'ya-Student Experience.xlsx` (E31). Left unchanged in CSV + Supabase; needs her full wording, then update both.
+- **HR Q6 ≈ Legal & Compliance Q9** — near-duplicate scenario/options (Sana's D48 comment). Left as-is by user decision (unlikely a player does both tracks).
 
 ### Blockers/Concerns
 
@@ -90,12 +91,19 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-08-03
-Stopped at: All phases complete. App live and tested.
+Last session: 2026-09-07
+Stopped at: Sana's Arabic language review applied to `Question Matrix Arabic.csv` and pushed live to Supabase (22 rows). Game is updated. NOTE: the CSV is gitignored (`.gitignore` line 56) — it is not tracked, so there is no CSV commit; Supabase is the source of truth.
 
 ### Resume steps
 
-No planned work remaining. Next session likely involves:
-1. UAT / further polish requests from user
+1. Get Sana's full Finance Q9 Arabic wording → update CSV + Supabase (see push method below)
 2. Event-day prep (clearing hires, seeding any updated questions)
 3. Any last-minute fixes surfaced during rehearsal
+
+### How to push single-row question edits to live Supabase (no redeploy)
+
+`scripts/seed-questions.ts` does a full wipe+reseed. For a handful of edits, PATCH PostgREST directly instead:
+- Key: `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (an `sb_secret_…` key)
+- Use `curl.exe`, NOT PowerShell `Invoke-RestMethod` (Supabase rejects it as "browser" use)
+- `curl -s -X PATCH "$URL/rest/v1/questions?track=eq.<Track>&question_no=eq.<n>&language=eq.ar" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" -H "Prefer: return=representation" --data-binary "@body.json"`
+- Track names are the canonical form (`Legal & Compliance`, url-encoded), not the CSV uppercase

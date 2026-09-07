@@ -115,4 +115,14 @@ All four of these are non-negotiable — none can be compromised:
 - A&D Q6 Arabic row corrected — was still showing text answers; now uses same image URLs as English row.
 - Established that Supabase SQL access requires a personal access token (`sbp_…`) from supabase.com/dashboard/account/tokens — the service role key cannot run DDL.
 
-*Last updated: 2026-08-04*
+### 2026-09-07
+- Applied Sana Alblooshi's Arabic language review (cell notes in `Ru'ya-Student Experience.xlsx`) to the Arabic question matrix — phrasing/tone polish for the Emirati audience, no changes to correct answers, option order, tracks, or question numbers.
+- 24 field edits across 22 rows in `Question Matrix Arabic.csv` (Engineering ×7 rows, Finance ×4, Marketing ×3, HR ×1, Legal & Compliance ×3, Operations & Supply Chain ×2, Project Management ×1, Architecture & Design ×1).
+- Pushed the same 22 rows straight to Supabase `questions` (language=ar) via PostgREST PATCH using the `sb_secret_…` key from `.env.local`. Verified: AR 100 / EN 100 rows unchanged, English untouched. Live immediately — the game reads questions from Supabase per session, no redeploy.
+- Skipped Finance Q9 — Sana's rewritten question text was truncated in the source file; left the existing DB/CSV text pending her full wording.
+- Left in place (per user): HR Q6 ≈ Legal & Compliance Q9 near-duplicate (Sana's D48 comment); Sana's notes remain in the xlsx un-cleared.
+- `Question Matrix Arabic.csv` / `Question Matrix.csv` are **gitignored** (`.gitignore` line 56) — not tracked, so there is no CSV commit. Supabase is the source of truth; CSV is kept in sync locally so a future `scripts/seed-questions.ts` run reproduces the same state.
+- Installed Git for Windows 2.55 on this machine (`winget install -e --id Git.Git`) — was previously absent. Node/npm still not installed here.
+- Tooling note: PowerShell `Invoke-RestMethod` (WinPS 5.1) is rejected by Supabase as "Forbidden use of secret API key in browser" — use `curl.exe` for PostgREST calls from this environment.
+
+*Last updated: 2026-09-07*
