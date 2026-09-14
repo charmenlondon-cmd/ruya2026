@@ -125,4 +125,14 @@ All four of these are non-negotiable — none can be compromised:
 - Installed Git for Windows 2.55 on this machine (`winget install -e --id Git.Git`) — was previously absent. Node/npm still not installed here.
 - Tooling note: PowerShell `Invoke-RestMethod` (WinPS 5.1) is rejected by Supabase as "Forbidden use of secret API key in browser" — use `curl.exe` for PostgREST calls from this environment.
 
-*Last updated: 2026-09-07*
+### 2026-09-14
+- Added a Ru'ya-branded favicon/app icon set (`favicon.ico`, `icon.png`, `apple-icon.png`) generated from the real Ru'ya logo, composited onto an AAAH teal-gradient rounded tile — distinct from AAAH's own site favicon, per user request. Verified live on `ruya2026.vercel.app`.
+- Found and fixed a Turbopack dev-cache bug along the way: this repo's OneDrive-synced folder corrupts Turbopack's dev filesystem cache (on by default since Next 16.1), crashing `next dev`. Disabled via `next.config.ts` — unrelated to the favicon but blocked local testing until fixed.
+- Shipped a `manifest.ts` for Android/desktop install icons, then removed it same day — it broke iPad "Add to Home Screen" for `/controller?lane=1|2`, since iOS always launches manifest-declared web apps at the manifest's `start_url`, not the page that was open. `apple-touch-icon` alone (no manifest) is sufficient for this project.
+- Diagnosed a reported "lane 1 and 2 controllers control each other" bug — traced thoroughly (local + production, code review, live reproduction) with no cross-talk found; root cause turned out to be a URL typo on one iPad (`?=lane2` instead of `?lane=2`), not a code issue.
+- Fixed missing answer images on Arabic for 4 existing visual questions (Architecture & Design Q6, Legal & Compliance Q6, Operations & Supply Chain Q4, Marketing Q9) — these had `image_url` set for English only, by an earlier deliberate decision, with Arabic falling back to text. Same image URLs now written to both language rows.
+- Fixed HR Q9 having no images in either language, despite an earlier session log claiming this was already done — the storage bucket never had them. Uploaded the 3 images (from user-supplied local file paths in an updated `Question Matrix.csv`) to Supabase Storage and patched both EN and AR rows.
+- Git push stopped working mid-session: Windows Git Credential Manager had a stale login for a different GitHub account (`ssd-aaai`) with no access to this repo. Cleared via `cmdkey /delete` + `git credential-manager erase`; user completed a fresh OAuth login in the Chrome profile signed into `charmenlondon-cmd`. Push succeeded after.
+- Installed Node.js LTS + npm on this machine via winget (previously absent) to enable local `next dev` testing.
+
+*Last updated: 2026-09-14*

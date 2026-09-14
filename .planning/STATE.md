@@ -11,7 +11,7 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 Phase: 7 of 7 — COMPLETE
 Status: SHIPPED — all 7 phases done. App live at https://ruya2026.vercel.app
-Last activity: 2026-09-07 — Applied Sana's Arabic language review to CSV + Supabase (22 rows)
+Last activity: 2026-09-14 — Added Ru'ya-branded favicon/app icons; fixed iPad "Add to Home Screen" URL truncation; fixed missing/text-only answer images for 5 visual questions across both languages
 
 Progress: ████████████████████ 100%
 
@@ -79,6 +79,11 @@ Progress: ████████████████████ 100%
 - **Hired network centre** — white AAAH logo + "Our Future Leaders" tagline at 90% opacity.
 - **createHire DB guard** — checks for existing hire by session_id before inserting; silent skip if found.
 - **useHires triple deduplication** — Realtime INSERT handler checks id, session_id, and player_name+track before appending.
+- **Favicon/app icons generated from the real Ru'ya logo** — `src/app/favicon.ico` + `icon.png` + `apple-icon.png`, background removed, composited onto an AAAH teal-gradient rounded tile. `favicon.ico` must be saved as RGBA (Pillow defaults to RGB, which Turbopack's decoder rejects with "not in RGBA format").
+- **No web app manifest** — `manifest.ts` was added then removed same day. iOS Safari's rule for a manifest with `display:'standalone'` is to always launch "Add to Home Screen" shortcuts at the manifest's `start_url`, ignoring the page that was actually open — this silently collapsed every `/controller?lane=1|2` shortcut to `/`. `apple-touch-icon` (from `apple-icon.png`) alone is enough for the iOS home-screen icon; no manifest needed for this project's use case.
+- **Turbopack dev filesystem cache disabled** (`next.config.ts` → `experimental.turbopackFileSystemCacheForDev: false`) — this repo lives in a OneDrive-synced folder; OneDrive's Files On-Demand sync corrupts Turbopack's mmap'd dev cache under `.next/`, crashing `next dev` with "corrupted database" panics. Cache-on-by-default shipped in Next 16.1.
+- **Answer images are shared across languages, not per-language** — the four pre-existing visual questions (A&D Q6, Legal Q6, Operations Q4, Marketing Q9) had `image_url` populated for `en` only, with `ar` rows left as null/text-only by earlier deliberate decision. Reversed 2026-09-14: same image URLs now written to both language rows, since the pictures themselves aren't language-specific.
+- **HR Q9 images were never actually uploaded** — an earlier session log claimed "images added... DB updated for EN + AR", but the storage bucket never had them and both language rows had `image_url = null`. Fixed 2026-09-14: uploaded from local `HR - Q9 Images/` folder to the `question-images` bucket, both language rows patched. Trust the DB over old log entries when they disagree.
 
 ### Deferred Issues
 
@@ -91,14 +96,15 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-07
-Stopped at: Sana's Arabic language review applied to `Question Matrix Arabic.csv` and pushed live to Supabase (22 rows). Game is updated. NOTE: the CSV is gitignored (`.gitignore` line 56) — it is not tracked, so there is no CSV commit; Supabase is the source of truth.
+Last session: 2026-09-14
+Stopped at: Favicon/app icons live on production (`ruya2026.vercel.app`), iPad shortcut bug fixed and pushed, and all 5 visual questions (HR Q9, Marketing Q9, Legal & Compliance Q6, Operations & Supply Chain Q4, Architecture & Design Q6) now show images in both EN and AR. Local `main` is fully in sync with `origin/main` (pushed as `charmenlondon-cmd` — the machine's cached git credential had drifted to a different GitHub account, `ssd-aaai`, mid-session; cleared via `cmdkey /delete` + `git credential-manager erase`, resolved by re-authenticating in a Chrome profile signed into charmenlondon-cmd).
 
 ### Resume steps
 
 1. Get Sana's full Finance Q9 Arabic wording → update CSV + Supabase (see push method below)
 2. Event-day prep (clearing hires, seeding any updated questions)
 3. Any last-minute fixes surfaced during rehearsal
+4. Untracked in git, still sitting in the project root: `Arabic Question Matrix.csv`, `Ru'ya-Student Experience.xlsx`, `Ruya Logo.htm`, `Ruya logo.png` — decide whether any should be tracked or gitignored
 
 ### How to push single-row question edits to live Supabase (no redeploy)
 
