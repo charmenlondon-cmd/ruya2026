@@ -88,7 +88,6 @@ Progress: ████████████████████ 100%
 
 ### Deferred Issues
 
-- **Finance Q9 (Arabic)** — Sana's rewritten question text is truncated in `Ru'ya-Student Experience.xlsx` (E31). Left unchanged in CSV + Supabase; needs her full wording, then update both.
 - **HR Q6 ≈ Legal & Compliance Q9** — near-duplicate scenario/options (Sana's D48 comment). Left as-is by user decision (unlikely a player does both tracks).
 
 ### Blockers/Concerns
@@ -102,10 +101,9 @@ Stopped at: Favicon/app icons live on production (`ruya2026.vercel.app`), iPad s
 
 ### Resume steps
 
-1. Get Sana's full Finance Q9 Arabic wording → update CSV + Supabase (see push method below)
-2. Event-day prep (clearing hires, seeding any updated questions)
-3. Any last-minute fixes surfaced during rehearsal
-4. Untracked in git, still sitting in the project root: `Arabic Question Matrix.csv`, `Ru'ya-Student Experience.xlsx`, `Ruya Logo.htm`, `Ruya logo.png` — decide whether any should be tracked or gitignored
+1. Event-day prep (clearing hires, seeding any updated questions)
+2. Any last-minute fixes surfaced during rehearsal
+3. Untracked in git, still sitting in the project root: `Arabic Question Matrix.csv`, `Ru'ya-Student Experience.xlsx`, `Ruya Logo.htm`, `Ruya logo.png` — decide whether any should be tracked or gitignored
 
 ### How to push single-row question edits to live Supabase (no redeploy)
 

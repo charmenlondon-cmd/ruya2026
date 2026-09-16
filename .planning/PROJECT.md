@@ -140,6 +140,7 @@ All four of these are non-negotiable — none can be compromised:
 - Confirmed via direct byte-for-byte comparison that live Supabase text and the original `Arabic Question Matrix.csv` were identical for all 35 flagged fields — the underlying text was never wrong.
 - Found the real cause: `src/components/display/QuestionScreen.tsx`'s answer-options grid is deliberately `dir="ltr"` (keeps A/B/C cards left-to-right regardless of language), but the answer `<p>` text had no `dir` of its own, so Arabic content inherited the LTR base direction — breaking the bidi algorithm's placement of trailing punctuation, hyphens, and embedded Latin terms/brand names.
 - Fixed by setting `dir={language === 'ar' ? 'rtl' : 'ltr'}` + `lang={language}` on the answer text element. Verified with before/after screenshots via `npm run dev` and a live Supabase test session (Engineering Q6, Marketing Q2) — confirmed visually fixed (e.g. a trailing period no longer glued to the wrong side of the line).
-- Not yet committed or deployed — pending user sign-off.
+- Committed (`ff2abff`), pushed to `main`, and confirmed live on `ruya2026.vercel.app`.
+- Closed the long-standing "Finance Q9 Arabic wording" deferred item (open since 2026-09-07, never actioned) — per user: Sana's truncated comment was actually a request to convert Q9 into a picture question, not a text rewrite, so there was never anything to apply. Removed from Deferred Issues; do not re-raise.
 
 *Last updated: 2026-09-16*
