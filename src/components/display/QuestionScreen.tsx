@@ -130,7 +130,11 @@ export function QuestionScreen({ session, language }: Props) {
                     className="object-contain rounded-xl w-full max-h-48"
                   />
                 ) : (
-                  <p className="text-aaah-dark-teal text-xl font-semibold text-center">
+                  <p
+                    dir={language === 'ar' ? 'rtl' : 'ltr'}
+                    lang={language}
+                    className="text-aaah-dark-teal text-xl font-semibold text-center"
+                  >
                     {text}
                   </p>
                 )}
