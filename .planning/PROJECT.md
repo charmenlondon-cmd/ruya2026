@@ -135,4 +135,11 @@ All four of these are non-negotiable — none can be compromised:
 - Git push stopped working mid-session: Windows Git Credential Manager had a stale login for a different GitHub account (`ssd-aaai`) with no access to this repo. Cleared via `cmdkey /delete` + `git credential-manager erase`; user completed a fresh OAuth login in the Chrome profile signed into `charmenlondon-cmd`. Push succeeded after.
 - Installed Node.js LTS + npm on this machine via winget (previously absent) to enable local `next dev` testing.
 
-*Last updated: 2026-09-14*
+### 2026-09-16
+- Read Manal Alblooshi's (Naresco) 2026-09-15 email flagging "alignment and space removal" issues on the display screen for 35 Arabic answer options across 8 tracks (Engineering, Finance, Architecture & Design, HR, IT, Legal & Compliance, Marketing, Project Management).
+- Confirmed via direct byte-for-byte comparison that live Supabase text and the original `Arabic Question Matrix.csv` were identical for all 35 flagged fields — the underlying text was never wrong.
+- Found the real cause: `src/components/display/QuestionScreen.tsx`'s answer-options grid is deliberately `dir="ltr"` (keeps A/B/C cards left-to-right regardless of language), but the answer `<p>` text had no `dir` of its own, so Arabic content inherited the LTR base direction — breaking the bidi algorithm's placement of trailing punctuation, hyphens, and embedded Latin terms/brand names.
+- Fixed by setting `dir={language === 'ar' ? 'rtl' : 'ltr'}` + `lang={language}` on the answer text element. Verified with before/after screenshots via `npm run dev` and a live Supabase test session (Engineering Q6, Marketing Q2) — confirmed visually fixed (e.g. a trailing period no longer glued to the wrong side of the line).
+- Not yet committed or deployed — pending user sign-off.
+
+*Last updated: 2026-09-16*

@@ -11,7 +11,7 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 Phase: 7 of 7 — COMPLETE
 Status: SHIPPED — all 7 phases done. App live at https://ruya2026.vercel.app
-Last activity: 2026-09-14 — Added Ru'ya-branded favicon/app icons; fixed iPad "Add to Home Screen" URL truncation; fixed missing/text-only answer images for 5 visual questions across both languages
+Last activity: 2026-09-16 — Fixed Arabic answer-text bidi/alignment bug in QuestionScreen.tsx flagged by Naresco's Sep 15 review (not yet committed/deployed)
 
 Progress: ████████████████████ 100%
 
@@ -84,6 +84,7 @@ Progress: ████████████████████ 100%
 - **Turbopack dev filesystem cache disabled** (`next.config.ts` → `experimental.turbopackFileSystemCacheForDev: false`) — this repo lives in a OneDrive-synced folder; OneDrive's Files On-Demand sync corrupts Turbopack's mmap'd dev cache under `.next/`, crashing `next dev` with "corrupted database" panics. Cache-on-by-default shipped in Next 16.1.
 - **Answer images are shared across languages, not per-language** — the four pre-existing visual questions (A&D Q6, Legal Q6, Operations Q4, Marketing Q9) had `image_url` populated for `en` only, with `ar` rows left as null/text-only by earlier deliberate decision. Reversed 2026-09-14: same image URLs now written to both language rows, since the pictures themselves aren't language-specific.
 - **HR Q9 images were never actually uploaded** — an earlier session log claimed "images added... DB updated for EN + AR", but the storage bucket never had them and both language rows had `image_url = null`. Fixed 2026-09-14: uploaded from local `HR - Q9 Images/` folder to the `question-images` bucket, both language rows patched. Trust the DB over old log entries when they disagree.
+- **"Arabic alignment/spacing" bug (reported by Manal Alblooshi, Naresco, 2026-09-15 email) was a code bug, not bad data** — `QuestionScreen.tsx`'s answer-options grid is deliberately `dir="ltr"` so cards A/B/C always sit left-to-right regardless of language, but the answer `<p>` text inside it had no `dir` of its own, so Arabic text inherited the LTR base direction. That breaks the Unicode bidi algorithm's placement of punctuation, hyphens, and embedded Latin terms (brand names, acronyms) — e.g. a trailing "." rendered glued to the wrong side of the last word. Fixed 2026-09-16: answer `<p>` now sets `dir={language === 'ar' ? 'rtl' : 'ltr'}` + `lang={language}`. Verified visually (before/after screenshots via a live Supabase test session) on Engineering Q6 and Marketing Q2 — confirmed via direct DB/CSV comparison that all 35 fields Manal flagged were byte-identical to the original CSV, so no text content was ever actually wrong.
 
 ### Deferred Issues
 
