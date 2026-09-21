@@ -11,7 +11,7 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 Phase: 7 of 7 — COMPLETE
 Status: SHIPPED — all 7 phases done. App live at https://ruya2026.vercel.app
-Last activity: 2026-09-21 — Full Arabic text-alignment audit and fix across display and controller (see Decisions log)
+Last activity: 2026-09-21 — Arabic alignment full fix + Back button added to quiz (see Decisions log)
 
 Progress: ████████████████████ 100%
 
@@ -29,7 +29,7 @@ Progress: ████████████████████ 100%
 - **GitHub:** https://github.com/charmenlondon-cmd/ruya2026 (branch: main)
 - **Vercel:** project `ruya2026`, team `charls-projects-dd19784e`
 - **Supabase:** https://djjtsfaqzvoksytxzkbf.supabase.co
-- **Deploy:** `vercel --prod --yes` from project root (Vercel CLI linked via `.vercel/`)
+- **Deploy:** push to `origin/main` — Vercel auto-deploys from GitHub (no manual CLI step needed)
 - **Deployment Protection:** disabled (was blocking public access on team account)
 
 ## Performance Metrics
@@ -87,6 +87,8 @@ Progress: ████████████████████ 100%
 - **"Arabic alignment/spacing" bug (reported by Manal Alblooshi, Naresco, 2026-09-15 email) was a code bug, not bad data** — `QuestionScreen.tsx`'s answer-options grid is deliberately `dir="ltr"` so cards A/B/C always sit left-to-right regardless of language, but the answer `<p>` text inside it had no `dir` of its own, so Arabic text inherited the LTR base direction. That breaks the Unicode bidi algorithm's placement of punctuation, hyphens, and embedded Latin terms (brand names, acronyms) — e.g. a trailing "." rendered glued to the wrong side of the last word. Fixed 2026-09-16: answer `<p>` now sets `dir={language === 'ar' ? 'rtl' : 'ltr'}` + `lang={language}`. Verified visually (before/after screenshots via a live Supabase test session) on Engineering Q6 and Marketing Q2 — confirmed via direct DB/CSV comparison that all 35 fields Manal flagged were byte-identical to the original CSV, so no text content was ever actually wrong.
 - **Sep-16 bidi fix was incomplete — block-level text alignment also broken (fixed 2026-09-21)** — The Sep-16 fix addressed the Unicode bidi algorithm (character-level punctuation direction) but did not fix block-level `text-align`. These are separate concerns: bidi controls how individual characters are ordered within a line; text-align controls how each line is positioned in its container. For single-line Arabic answers the two issues are visually indistinguishable (a narrow `<p>` that shrink-wraps to content looks right-aligned even with `text-center`). For multi-line answers (e.g. Engineering Q1 Answer B), the short last line was being centred inside a full-width container, which browsers render from the left — appearing left-aligned. A separate bug in the controller fix attempt also introduced a double-reversal: adding both `dir="rtl"` on a flex button (which reverses item order in RTL context) AND `flex-row-reverse` (which reverses it again) cancelled out, leaving LTR layout. Both were corrected in commits `820dff3`, `fff929f`, and `26d35fe` on 2026-09-21.
 - **Arabic alignment fix scope — what was fixed and what was intentionally left (2026-09-21)** — Full audit of every component that renders Arabic text. Fixed: display `QuestionScreen` (answer cards: `w-full text-right dir=rtl`; question card: `dir`/`lang`), display `FinalResultScreen` (track, outcome message, wellGetBack), display `WaitingScreen` (player name, track), controller `QuizScreen` (question card and answer text `<span>`: `flex-1 text-right dir=rtl lang=ar`), controller `FinalResultScreen` (track, outcome message, wellGetBack). Intentionally NOT fixed: `HiredNetworkScreen` floating avatar name labels, and the setup-flow screen headings in `NameEntryScreen`, `TrackSelectScreen`, and `AvatarSelectScreen`. Reason: all are short single-line centred strings that cannot wrap to a second line, so the multi-line alignment failure mode cannot occur. If Manal flags anything specific on those screens the fix is the same pattern (`dir`/`lang` on the element, `text-right` for Arabic).
+- **Back button on quiz (added 2026-09-21)** — Players on Q2–Q10 can tap "Back" (top-right of the progress row) to return to the previous question and change their answer. Going back as far as Q1 is allowed; going back past Q1 is not (button hidden on Q1). Score is adjusted correctly: the previous question's contribution is subtracted before the new answer is scored, using a `Record<number, boolean>` (`answeredCorrectly`) keyed by question index. Deleting the entry on Back ensures a re-answer is treated as a fresh first answer (no double-subtract). A `genRef` generation counter invalidates any in-flight auto-advance timers (150ms local + 1200ms session update) if Back is pressed before they fire. Back is disabled while `answered` is true (after tapping an answer, during the flash window) to prevent mid-animation interruption. Strings added: `back: 'Back'` (EN) and `back: 'رجوع'` (AR) in i18n.ts. Note: `controller/page.tsx` wraps everything in `<div dir={rtl|ltr}>` — flex item order already reverses for Arabic without any `flex-row-reverse` on the button.
+- **Vercel deploys automatically from GitHub (confirmed 2026-09-21)** — Pushing to `origin/main` triggers production deployment on Vercel automatically. The earlier STATE.md note about running `vercel --prod --yes` manually is stale — that step is not needed.
 
 ### Deferred Issues
 
@@ -99,7 +101,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-09-21
-Stopped at: Full Arabic text-alignment fix complete and deployed. All components that render multi-line Arabic text now have `dir`/`lang` attributes and explicit `text-right` alignment. Local `main` fully in sync with `origin/main` (commit `26d35fe`).
+Stopped at: Back button added to controller quiz screen (Q2–Q10, top-right of progress row, with score adjustment and race-condition guard). Arabic alignment fixes complete. All docs updated. Local `main` fully in sync with `origin/main` (latest commit `d4487f9`).
 
 ### Resume steps
 

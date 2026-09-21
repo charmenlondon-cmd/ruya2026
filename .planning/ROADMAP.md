@@ -67,7 +67,7 @@ Plans:
 Plans:
 - [x] 04-01: Onboarding flow — language select, avatar select (10 avatars), name entry, track select (10 tracks)
 - [x] 04-02: Quiz interface — A/B/C answer buttons, question number indicator, answer submission
-- [ ] 04-03: Arabic RTL layout — full RTL support across all controller screens
+- [x] 04-03: Arabic RTL layout — full RTL support across all controller screens
 
 ### Phase 5: Display Screen
 **Goal**: Large display shows live question state, player info, results, and screensaver — all driven by Realtime sync
@@ -76,9 +76,9 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 05-01: Question display — current question, answer options, player info panel
-- [ ] 05-02: Result screens — "You're Hired" and "We'll Get Back to You" with branding
-- [ ] 05-03: Screensaver mode — idle state with AAAH branding animation
+- [x] 05-01: Question display — current question, answer options, player info panel
+- [x] 05-02: Result screens — "You're Hired" and "We'll Get Back to You" with branding
+- [x] 05-03: Screensaver mode — idle state with AAAH branding animation
 
 ### Phase 6: Hired Network
 **Goal**: Animated visualization on the display screen shows hired players clustered by track around the AAAH logo, growing through the day
@@ -88,8 +88,8 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 06-01: Static hired network — render avatar nodes clustered by track around AAAH logo
-- [ ] 06-02: Live growth — new hires animate in when players score 7–10, network updates in real time
+- [x] 06-01: Static hired network — render avatar nodes clustered by track around AAAH logo
+- [x] 06-02: Live growth — new hires animate in when players score 7–10, network updates in real time
 
 ### Phase 7: Admin Panel & Deploy
 **Goal**: Admin panel operational with full session control, and app deployed to Vercel
@@ -98,8 +98,8 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 07-01: Admin panel — start/reset session, clear player, clear hires, screensaver toggle, session state viewer
-- [ ] 07-02: Vercel deployment — env vars, project config, production smoke test
+- [x] 07-01: Admin panel — start/reset session, clear player, clear hires, screensaver toggle, session state viewer
+- [x] 07-02: Vercel deployment — env vars, project config, production smoke test
 
 ## Progress
 
