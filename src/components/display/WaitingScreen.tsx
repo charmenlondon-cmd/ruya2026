@@ -36,13 +36,13 @@ export function WaitingScreen({ session, language }: Props) {
       )}
 
       {session.player_name && (
-        <p className="text-6xl font-bold text-white text-center">
+        <p dir={language === 'ar' ? 'rtl' : 'ltr'} lang={language} className="text-6xl font-bold text-white text-center">
           {session.player_name}
         </p>
       )}
 
       {session.track && (
-        <p className="text-3xl text-aaah-light-teal text-center">
+        <p dir={language === 'ar' ? 'rtl' : 'ltr'} lang={language} className="text-3xl text-aaah-light-teal text-center">
           {strings.trackName(session.track)}
         </p>
       )}
