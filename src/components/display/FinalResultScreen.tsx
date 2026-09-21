@@ -40,7 +40,7 @@ export function FinalResultScreen({ session, language }: Props) {
 
       {/* Track */}
       {session.track && (
-        <p className="text-3xl text-aaah-light-teal text-center">
+        <p dir={language === 'ar' ? 'rtl' : 'ltr'} lang={language} className="text-3xl text-aaah-light-teal text-center">
           {strings.trackName(session.track)}
         </p>
       )}
@@ -55,12 +55,12 @@ export function FinalResultScreen({ session, language }: Props) {
       </p>
 
       {/* Outcome message */}
-      <p className="text-2xl text-white/80 text-center max-w-2xl">
+      <p dir={language === 'ar' ? 'rtl' : 'ltr'} lang={language} className="text-2xl text-white/80 text-center max-w-2xl">
         {isHired ? strings.hiredMessage : strings.getBackMessage}
       </p>
 
       {!isHired && (
-        <h2 className="text-5xl font-bold text-center text-white">
+        <h2 dir={language === 'ar' ? 'rtl' : 'ltr'} lang={language} className="text-5xl font-bold text-center text-white">
           {strings.wellGetBack}
         </h2>
       )}

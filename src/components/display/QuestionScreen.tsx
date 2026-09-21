@@ -96,7 +96,11 @@ export function QuestionScreen({ session, language }: Props) {
           {session.track && <TrackCardDecoration track={session.track} />}
           {/* Question card */}
           <div className="bg-white/90 rounded-3xl p-10 w-full">
-            <p className="text-aaah-dark-teal text-3xl font-semibold text-center leading-relaxed">
+            <p
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+              lang={language}
+              className="text-aaah-dark-teal text-3xl font-semibold text-center leading-relaxed"
+            >
               {question.question_text}
             </p>
           </div>
@@ -133,7 +137,9 @@ export function QuestionScreen({ session, language }: Props) {
                   <p
                     dir={language === 'ar' ? 'rtl' : 'ltr'}
                     lang={language}
-                    className="text-aaah-dark-teal text-xl font-semibold text-center"
+                    className={`text-aaah-dark-teal text-xl font-semibold w-full ${
+                      language === 'ar' ? 'text-right' : 'text-center'
+                    }`}
                   >
                     {text}
                   </p>
