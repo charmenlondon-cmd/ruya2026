@@ -157,9 +157,13 @@ export function QuizScreen({ session, language }: Props) {
     <div className="relative flex flex-col items-center w-full max-w-lg gap-4">
       <StartOverButton session={session} language={language} />
 
-      {/* Progress row — Back on left, question counter centred, spacer on right */}
+      {/* Progress row — spacer left keeps counter centred, Back sits on the right */}
       <div className="flex items-center w-full">
-        <div className="flex-1 flex justify-start">
+        <div className="flex-1" />
+        <p className="text-white text-sm font-semibold">
+          {strings.questionOf(localIndex + 1, 10)}
+        </p>
+        <div className="flex-1 flex justify-end">
           {canGoBack && (
             <button
               onClick={handleBack}
@@ -169,10 +173,6 @@ export function QuizScreen({ session, language }: Props) {
             </button>
           )}
         </div>
-        <p className="text-white text-sm font-semibold">
-          {strings.questionOf(localIndex + 1, 10)}
-        </p>
-        <div className="flex-1" />
       </div>
 
       {/* Question card */}
