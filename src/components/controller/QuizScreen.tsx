@@ -157,20 +157,23 @@ export function QuizScreen({ session, language }: Props) {
     <div className="relative flex flex-col items-center w-full max-w-lg gap-4">
       <StartOverButton session={session} language={language} />
 
-      {/* Back button — top-left, mirrors Start Over style, hidden on Q1 */}
-      {canGoBack && (
-        <button
-          onClick={handleBack}
-          className="fixed top-4 left-4 text-white/50 text-sm font-medium hover:text-white/80 active:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/10 active:bg-white/20 z-50"
-        >
-          {strings.back}
-        </button>
-      )}
-
-      {/* Progress */}
-      <p className="text-white text-sm font-semibold">
-        {strings.questionOf(localIndex + 1, 10)}
-      </p>
+      {/* Progress row — Back on left, question counter centred, spacer on right */}
+      <div className="flex items-center w-full">
+        <div className="flex-1 flex justify-start">
+          {canGoBack && (
+            <button
+              onClick={handleBack}
+              className="text-white/50 text-sm font-medium hover:text-white/80 active:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/10 active:bg-white/20"
+            >
+              {strings.back}
+            </button>
+          )}
+        </div>
+        <p className="text-white text-sm font-semibold">
+          {strings.questionOf(localIndex + 1, 10)}
+        </p>
+        <div className="flex-1" />
+      </div>
 
       {/* Question card */}
       <div className="bg-white/90 rounded-2xl p-6 w-full">
