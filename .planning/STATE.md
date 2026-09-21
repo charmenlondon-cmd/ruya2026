@@ -11,7 +11,7 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 Phase: 7 of 7 — COMPLETE
 Status: SHIPPED — all 7 phases done. App live at https://ruya2026.vercel.app
-Last activity: 2026-09-16 — Fixed Arabic answer-text bidi/alignment bug in QuestionScreen.tsx flagged by Naresco's Sep 15 review (not yet committed/deployed)
+Last activity: 2026-09-21 — Full Arabic text-alignment audit and fix across display and controller (see Decisions log)
 
 Progress: ████████████████████ 100%
 
@@ -85,6 +85,8 @@ Progress: ████████████████████ 100%
 - **Answer images are shared across languages, not per-language** — the four pre-existing visual questions (A&D Q6, Legal Q6, Operations Q4, Marketing Q9) had `image_url` populated for `en` only, with `ar` rows left as null/text-only by earlier deliberate decision. Reversed 2026-09-14: same image URLs now written to both language rows, since the pictures themselves aren't language-specific.
 - **HR Q9 images were never actually uploaded** — an earlier session log claimed "images added... DB updated for EN + AR", but the storage bucket never had them and both language rows had `image_url = null`. Fixed 2026-09-14: uploaded from local `HR - Q9 Images/` folder to the `question-images` bucket, both language rows patched. Trust the DB over old log entries when they disagree.
 - **"Arabic alignment/spacing" bug (reported by Manal Alblooshi, Naresco, 2026-09-15 email) was a code bug, not bad data** — `QuestionScreen.tsx`'s answer-options grid is deliberately `dir="ltr"` so cards A/B/C always sit left-to-right regardless of language, but the answer `<p>` text inside it had no `dir` of its own, so Arabic text inherited the LTR base direction. That breaks the Unicode bidi algorithm's placement of punctuation, hyphens, and embedded Latin terms (brand names, acronyms) — e.g. a trailing "." rendered glued to the wrong side of the last word. Fixed 2026-09-16: answer `<p>` now sets `dir={language === 'ar' ? 'rtl' : 'ltr'}` + `lang={language}`. Verified visually (before/after screenshots via a live Supabase test session) on Engineering Q6 and Marketing Q2 — confirmed via direct DB/CSV comparison that all 35 fields Manal flagged were byte-identical to the original CSV, so no text content was ever actually wrong.
+- **Sep-16 bidi fix was incomplete — block-level text alignment also broken (fixed 2026-09-21)** — The Sep-16 fix addressed the Unicode bidi algorithm (character-level punctuation direction) but did not fix block-level `text-align`. These are separate concerns: bidi controls how individual characters are ordered within a line; text-align controls how each line is positioned in its container. For single-line Arabic answers the two issues are visually indistinguishable (a narrow `<p>` that shrink-wraps to content looks right-aligned even with `text-center`). For multi-line answers (e.g. Engineering Q1 Answer B), the short last line was being centred inside a full-width container, which browsers render from the left — appearing left-aligned. A separate bug in the controller fix attempt also introduced a double-reversal: adding both `dir="rtl"` on a flex button (which reverses item order in RTL context) AND `flex-row-reverse` (which reverses it again) cancelled out, leaving LTR layout. Both were corrected in commits `820dff3`, `fff929f`, and `26d35fe` on 2026-09-21.
+- **Arabic alignment fix scope — what was fixed and what was intentionally left (2026-09-21)** — Full audit of every component that renders Arabic text. Fixed: display `QuestionScreen` (answer cards: `w-full text-right dir=rtl`; question card: `dir`/`lang`), display `FinalResultScreen` (track, outcome message, wellGetBack), display `WaitingScreen` (player name, track), controller `QuizScreen` (question card and answer text `<span>`: `flex-1 text-right dir=rtl lang=ar`), controller `FinalResultScreen` (track, outcome message, wellGetBack). Intentionally NOT fixed: `HiredNetworkScreen` floating avatar name labels, and the setup-flow screen headings in `NameEntryScreen`, `TrackSelectScreen`, and `AvatarSelectScreen`. Reason: all are short single-line centred strings that cannot wrap to a second line, so the multi-line alignment failure mode cannot occur. If Manal flags anything specific on those screens the fix is the same pattern (`dir`/`lang` on the element, `text-right` for Arabic).
 
 ### Deferred Issues
 
@@ -96,8 +98,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-14
-Stopped at: Favicon/app icons live on production (`ruya2026.vercel.app`), iPad shortcut bug fixed and pushed, and all 5 visual questions (HR Q9, Marketing Q9, Legal & Compliance Q6, Operations & Supply Chain Q4, Architecture & Design Q6) now show images in both EN and AR. Local `main` is fully in sync with `origin/main` (pushed as `charmenlondon-cmd` — the machine's cached git credential had drifted to a different GitHub account, `ssd-aaai`, mid-session; cleared via `cmdkey /delete` + `git credential-manager erase`, resolved by re-authenticating in a Chrome profile signed into charmenlondon-cmd).
+Last session: 2026-09-21
+Stopped at: Full Arabic text-alignment fix complete and deployed. All components that render multi-line Arabic text now have `dir`/`lang` attributes and explicit `text-right` alignment. Local `main` fully in sync with `origin/main` (commit `26d35fe`).
 
 ### Resume steps
 
