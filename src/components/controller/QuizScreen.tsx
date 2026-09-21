@@ -135,14 +135,9 @@ export function QuizScreen({ session, language }: Props) {
               key={key}
               onClick={() => handleAnswer(key)}
               disabled={answered}
-              dir={language === 'ar' ? 'rtl' : 'ltr'}
-              className={`bg-white/90 text-aaah-dark-teal rounded-2xl p-4 w-full font-semibold hover:bg-white active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center ${
-                language === 'ar' ? 'text-right flex-row-reverse' : 'text-left'
-              }`}
+              className="bg-white/90 text-aaah-dark-teal rounded-2xl p-4 w-full font-semibold hover:bg-white active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center"
             >
-              <span className={`inline-flex justify-center items-center w-8 h-8 rounded-full bg-aaah-dark-teal text-white font-bold flex-shrink-0 ${
-                language === 'ar' ? 'ms-3' : 'me-3'
-              }`}>
+              <span className="inline-flex justify-center items-center w-8 h-8 rounded-full bg-aaah-dark-teal text-white font-bold me-3 flex-shrink-0">
                 {key}
               </span>
               {imageUrl ? (
@@ -154,7 +149,13 @@ export function QuizScreen({ session, language }: Props) {
                   className="w-full max-h-36 object-contain rounded-xl"
                 />
               ) : (
-                <span lang={language}>{text}</span>
+                <span
+                  dir={language === 'ar' ? 'rtl' : 'ltr'}
+                  lang={language}
+                  className={`flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}
+                >
+                  {text}
+                </span>
               )}
             </button>
           )
