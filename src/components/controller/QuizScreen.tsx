@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { updateSession } from '@/lib/session'
 import { getQuestionsForTrack } from '@/lib/questions'
@@ -32,13 +32,17 @@ export function QuizScreen({ session, language }: Props) {
   const [answered, setAnswered] = useState(false)
   // Optimistic local index so the question advances instantly without waiting for Realtime
   const [localIndex, setLocalIndex] = useState(session.current_question)
+  // Per-question correctness — needed to adjust score correctly when going back and re-answering
+  const [answeredCorrectly, setAnsweredCorrectly] = useState<Record<number, boolean>>({})
+  // Generation counter: incrementing this invalidates any in-flight advance timers
+  const genRef = useRef(0)
 
   // Keep localIndex in sync if Supabase diverges (e.g. session reset)
   useEffect(() => {
     setLocalIndex(session.current_question)
   }, [session.current_question])
 
-  // Reset answered flag when question advances
+  // Reset answered flag when question index changes
   useEffect(() => {
     setAnswered(false)
   }, [localIndex])
@@ -79,16 +83,27 @@ export function QuizScreen({ session, language }: Props) {
     setAnswered(true)
 
     const isCorrect = answer === question.correct_answer
-    const newScore = session.score + (isCorrect ? 1 : 0)
     const isLast = localIndex >= 9
     const nextIndex = isLast ? localIndex : localIndex + 1
 
-    // Controller advances locally after 150ms for instant tap feedback
+    // If this question was previously answered (player went back and is re-answering),
+    // subtract the old contribution before adding the new one
+    const prevCorrect = answeredCorrectly[localIndex]
+    const scoreDelta = (isCorrect ? 1 : 0) - (prevCorrect !== undefined ? (prevCorrect ? 1 : 0) : 0)
+    const newScore = session.score + scoreDelta
+
+    setAnsweredCorrectly(prev => ({ ...prev, [localIndex]: isCorrect }))
+
+    // Tag this sequence so handleBack can cancel it if pressed before it completes
+    const gen = ++genRef.current
+
+    // Advance local display immediately for instant tap feedback
     setTimeout(() => {
+      if (genRef.current !== gen) return
       if (!isLast) setLocalIndex(nextIndex)
     }, 150)
 
-    // Write 1: mark answer_submitted so display can briefly highlight the selection
+    // Write 1: mark answer_submitted so the display can briefly highlight the selection
     updateSession(session.id, {
       last_answer: answer,
       last_answer_correct: isCorrect,
@@ -97,6 +112,7 @@ export function QuizScreen({ session, language }: Props) {
     }).then(() => {
       // Write 2: advance display to next question after 1200ms
       setTimeout(() => {
+        if (genRef.current !== gen) return
         updateSession(session.id, {
           current_question: nextIndex,
           state: isLast ? 'final_result' : 'question_active',
@@ -105,9 +121,52 @@ export function QuizScreen({ session, language }: Props) {
     }).catch(console.error)
   }
 
+  function handleBack() {
+    const prevIndex = localIndex - 1
+    if (prevIndex < 0 || answered) return
+
+    // Invalidate any in-flight advance timers from the previous answer
+    genRef.current++
+
+    // Undo the previous question's score contribution so the player can re-answer cleanly.
+    // Delete it from answeredCorrectly so handleAnswer treats it as a fresh first answer.
+    const wasCorrect = answeredCorrectly[prevIndex]
+    const scoreAdjust = wasCorrect === true ? -1 : 0
+
+    setAnsweredCorrectly(prev => {
+      const next = { ...prev }
+      delete next[prevIndex]
+      return next
+    })
+
+    setLocalIndex(prevIndex)
+    setAnswered(false)
+
+    updateSession(session.id, {
+      score: session.score + scoreAdjust,
+      current_question: prevIndex,
+      state: 'question_active',
+      last_answer: null,
+      last_answer_correct: null,
+    }).catch(console.error)
+  }
+
+  const canGoBack = localIndex > 0 && !answered
+
   return (
     <div className="relative flex flex-col items-center w-full max-w-lg gap-4">
       <StartOverButton session={session} language={language} />
+
+      {/* Back button — top-left, mirrors Start Over style, hidden on Q1 */}
+      {canGoBack && (
+        <button
+          onClick={handleBack}
+          className="fixed top-4 left-4 text-white/50 text-sm font-medium hover:text-white/80 active:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/10 active:bg-white/20 z-50"
+        >
+          {strings.back}
+        </button>
+      )}
+
       {/* Progress */}
       <p className="text-white text-sm font-semibold">
         {strings.questionOf(localIndex + 1, 10)}
