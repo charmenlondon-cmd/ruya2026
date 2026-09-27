@@ -47,7 +47,7 @@ function DisplayInner() {
       <div
         dir={dir}
         className="h-screen w-screen overflow-hidden flex flex-col"
-        style={{ transform: `scale(${tvSafeScale})`, transformOrigin: 'center center' }}
+        style={{ transform: `scale(${tvSafeScale})`, transformOrigin: 'top center' }}
       >
         {loading && (
           <div className="flex-1 flex items-center justify-center">

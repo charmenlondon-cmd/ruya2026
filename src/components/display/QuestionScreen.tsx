@@ -88,8 +88,9 @@ export function QuestionScreen({ session, language }: Props) {
         </span>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-8 px-12 py-8 relative">
+      {/* Main content — pt-56 guarantees clearance above the card for every
+          track's floating decoration (tallest, Operations, pokes up ~192px) */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-8 px-12 pt-56 pb-8 relative">
         {session.track && <TrackAnimation track={session.track} />}
         {/* Wrapper gives TrackCardDecoration a clean relative anchor above the card */}
         <div className="relative w-full max-w-5xl z-10">
