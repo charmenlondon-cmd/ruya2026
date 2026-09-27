@@ -143,4 +143,19 @@ All four of these are non-negotiable — none can be compromised:
 - Committed (`ff2abff`), pushed to `main`, and confirmed live on `ruya2026.vercel.app`.
 - Closed the long-standing "Finance Q9 Arabic wording" deferred item (open since 2026-09-07, never actioned) — per user: Sana's truncated comment was actually a request to convert Q9 into a picture question, not a text rewrite, so there was never anything to apply. Removed from Deferred Issues; do not re-raise.
 
-*Last updated: 2026-09-16*
+### 2026-09-27 — Event day: live TV compatibility fixes on-site
+
+User was on-site at the careers fair with the displays live. A chain of issues surfaced one at a time on one of the venue's TVs (a cheap Geepas smart TV/Android TV box) as they were found, each diagnosed and pushed live within the session:
+
+1. **Display rendered completely unstyled** (default serif font, no colours, no layout) on that TV, even though session data was correct. Root cause: Tailwind v4 wraps its generated CSS in `@layer` blocks (Chromium 99+, 2022); the TV's frozen/outdated bundled browser doesn't recognise `@layer` and discards the entire block rather than degrading gracefully. Fixed with `@csstools/postcss-cascade-layers` (flattens `@layer` into plain CSS, no visual change on modern browsers).
+2. **Push blocked by a stale Windows git credential** for a different GitHub account (`ssd-aaai`) — same issue as 2026-09-14. Cleared via `cmdkey /delete` (PowerShell), fresh OAuth login resolved it.
+3. **TV overscan/zoom cropped the bottom of the display** (confirmed top was always fully visible, only the bottom was cut). Added a scale-down wrapper to `/display` (default 90%, `transform-origin: top center` so only the bottom margin grows), then a slider + presets in the admin panel to tune it live per lane via Supabase Realtime Broadcast (no DB migration) with localStorage persistence on the receiving TV.
+4. **Track decoration image collided with the header** on some tracks — each track's floating card-top decoration pokes up a different amount (83–192px depending on the Lottie asset); reserved clearance was only ~32px. Increased to a fixed buffer, later reduced once decorations were also shrunk.
+5. **User feedback: everything felt too large/cramped for a wide-but-short TV screen.** Did a compacting pass: shrunk all 10 tracks' decorative Lottie icons to ~70%, shrunk the question card/answer cards/badges/images/fonts/gaps in `QuestionScreen`.
+6. **Root cause found for a decoration icon appearing clipped behind an answer card:** all 10 tracks positioned their background icon via `right: calc(50% - ~512px)`, a formula that only lands correctly beside the content column on an *exact* 1920px-wide viewport. Replaced with positioning scoped to the actual content column (not the full screen) — required two iterations based on live feedback: first attempt tucked the icon *behind* the cards (wrong — user wanted it visible), corrected to anchor `top: calc(100% + 5px); right: 0` relative to the content column, matching the original pre-session look (visible, below, right-aligned).
+7. **Added a "Full Screen" button** to `/display` — venue TV browsers show their own address bar; Fullscreen API requires a real tap, so auto-hiding isn't possible. Small tap-once button added; separately, the TV's own browser turned out to have a native fullscreen toggle in its menu once "Desktop site" was enabled.
+8. **Enlarged the top bar ~50%** (avatar/name/track/question counter) without shifting the question card/answers beneath it, using an invisible-spacer + absolute-overlay technique — reusable if the same kind of "resize without reflowing" request comes up again.
+
+Every fix was verified visually (either via Claude in Chrome against the live production URL, or against a local production build) and confirmed deployed on `ruya2026.vercel.app` before telling the user to check the venue TV. `FinalResultScreen` and `WaitingScreen` were not touched — only `QuestionScreen` — in case similar sizing issues show up there later in the event.
+
+*Last updated: 2026-09-27*
