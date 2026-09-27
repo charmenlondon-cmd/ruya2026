@@ -5,11 +5,11 @@ import { useLottieFile } from './useLottieFile'
 
 // HR_1: 1000×1000 (1:1) — background
 // HR_2: 450×450  (1:1) — card decoration
-const W_BG  = 200
-const H_BG  = 200
+const W_BG  = 140
+const H_BG  = 140
 
-const W_DEC = 130
-const H_DEC = 130
+const W_DEC = 91
+const H_DEC = 91
 
 export function HRAnimation() {
   const anim1 = useLottieFile('/animations/HR_1.json')
@@ -21,7 +21,7 @@ export function HRAnimation() {
           animationData={anim1}
           loop
           className="absolute opacity-80"
-          style={{ width: W_BG, height: H_BG, bottom: '24px', right: 'calc(50% - 512px)' }}
+          style={{ width: W_BG, height: H_BG, bottom: '24px', right: '24px' }}
         />
       )}
     </div>

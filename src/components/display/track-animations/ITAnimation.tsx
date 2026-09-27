@@ -5,11 +5,11 @@ import { useLottieFile } from './useLottieFile'
 
 // IT_1: 1000×1000 (1:1)   — card decoration
 // IT_2: 1600×1200 (4:3)   — background
-const W_BG  = 200
-const H_BG  = Math.round(W_BG * (1200 / 1600)) // 150
+const W_BG  = 140
+const H_BG  = Math.round(W_BG * (1200 / 1600)) // 105
 
-const W_DEC = 200
-const H_DEC = 200
+const W_DEC = 140
+const H_DEC = 140
 
 export function ITAnimation() {
   const anim2 = useLottieFile('/animations/IT_2.json')
@@ -21,7 +21,7 @@ export function ITAnimation() {
           animationData={anim2}
           loop
           className="absolute opacity-80"
-          style={{ width: W_BG, height: H_BG, bottom: '24px', right: 'calc(50% - 512px)' }}
+          style={{ width: W_BG, height: H_BG, bottom: '24px', right: '24px' }}
         />
       )}
     </div>

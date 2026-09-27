@@ -3,10 +3,10 @@
 import Lottie from 'lottie-react'
 import { useLottieFile } from './useLottieFile'
 
-const W_BG = 200
-const H_BG = Math.round(W_BG * (1080 / 1920)) // 113 — background (16:9)
-const W_DEC = 130
-const H_DEC = 130                              // card decoration (square)
+const W_BG = 140
+const H_BG = Math.round(W_BG * (1080 / 1920)) // 79 — background (16:9)
+const W_DEC = 91
+const H_DEC = 91                               // card decoration (square)
 
 // Background animation — _1 runs along the bottom
 export function FinanceAnimation() {
@@ -19,7 +19,7 @@ export function FinanceAnimation() {
           animationData={anim1}
           loop
           className="absolute bottom-0 opacity-80"
-          style={{ width: W_BG, height: H_BG, right: 'calc(50% - 492px)' }}
+          style={{ width: W_BG, height: H_BG, right: '24px' }}
         />
       )}
     </div>

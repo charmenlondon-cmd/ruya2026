@@ -5,11 +5,11 @@ import { useLottieFile } from './useLottieFile'
 
 // A&D_1: 1703×1024 (1.66:1) — room scene
 // A&D_2: 1000×700  (1.43:1) — architect at desk
-const W_BG  = 200
-const H_BG  = Math.round(W_BG * (700 / 1000))   // 140 — AD_2 as background
+const W_BG  = 140
+const H_BG  = Math.round(W_BG * (700 / 1000))   // 98 — AD_2 as background
 
-const W_DEC = 200
-const H_DEC = Math.round(W_DEC * (1024 / 1703))  // 120 — AD_1 as card decoration
+const W_DEC = 140
+const H_DEC = Math.round(W_DEC * (1024 / 1703))  // 84 — AD_1 as card decoration
 
 // Background animation — architect at desk sits at the bottom
 export function ArchitectureAnimation() {
@@ -22,7 +22,7 @@ export function ArchitectureAnimation() {
           animationData={anim2}
           loop
           className="absolute opacity-80"
-          style={{ width: W_BG, height: H_BG, bottom: '24px', right: 'calc(50% - 512px)' }}
+          style={{ width: W_BG, height: H_BG, bottom: '24px', right: '24px' }}
         />
       )}
     </div>

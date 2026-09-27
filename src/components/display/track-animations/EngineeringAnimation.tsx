@@ -3,9 +3,9 @@
 import Lottie from 'lottie-react'
 import { useLottieFile } from './useLottieFile'
 
-const W = 200
-const H1 = Math.round(W * (1080 / 1920)) // 113
-const H2 = Math.round(W * (800 / 1920))  // 83
+const W = 140
+const H1 = Math.round(W * (1080 / 1920)) // 79
+const H2 = Math.round(W * (800 / 1920))  // 58
 
 // Background animation — _1 runs along the bottom of the content area
 export function EngineeringAnimation() {
@@ -18,7 +18,7 @@ export function EngineeringAnimation() {
           animationData={anim1}
           loop
           className="absolute bottom-0 opacity-80"
-          style={{ width: W, height: H1, right: 'calc(50% - 492px)' }}
+          style={{ width: W, height: H1, right: '24px' }}
         />
       )}
     </div>

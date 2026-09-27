@@ -5,11 +5,11 @@ import { useLottieFile } from './useLottieFile'
 
 // PM_1: 700×500  (7:5) — card decoration
 // PM_2: 1250×1000 (5:4) — background
-const W_BG  = 140
-const H_BG  = Math.round(W_BG * (1000 / 1250)) // 112
+const W_BG  = 98
+const H_BG  = Math.round(W_BG * (1000 / 1250)) // 78
 
-const W_DEC = 140
-const H_DEC = Math.round(W_DEC * (500 / 700))  // 100
+const W_DEC = 98
+const H_DEC = Math.round(W_DEC * (500 / 700))  // 70
 
 export function PMAnimation() {
   const anim2 = useLottieFile('/animations/PM_2.json')
@@ -21,7 +21,7 @@ export function PMAnimation() {
           animationData={anim2}
           loop
           className="absolute opacity-80"
-          style={{ width: W_BG, height: H_BG, bottom: '24px', right: 'calc(50% - 512px)' }}
+          style={{ width: W_BG, height: H_BG, bottom: '24px', right: '24px' }}
         />
       )}
     </div>

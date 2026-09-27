@@ -5,11 +5,11 @@ import { useLottieFile } from './useLottieFile'
 
 // Marketing_1: 500×500 (1:1) — card decoration
 // Marketing_2: 1000×1000 (1:1) — background
-const W_BG  = 120
-const H_BG  = 120
+const W_BG  = 84
+const H_BG  = 84
 
-const W_DEC = 120
-const H_DEC = 120
+const W_DEC = 84
+const H_DEC = 84
 
 export function MarketingAnimation() {
   const anim2 = useLottieFile('/animations/Marketing_2.json')
@@ -21,7 +21,7 @@ export function MarketingAnimation() {
           animationData={anim2}
           loop
           className="absolute opacity-80"
-          style={{ width: W_BG, height: H_BG, bottom: '14px', right: 'calc(50% - 512px)' }}
+          style={{ width: W_BG, height: H_BG, bottom: '14px', right: '24px' }}
         />
       )}
     </div>
