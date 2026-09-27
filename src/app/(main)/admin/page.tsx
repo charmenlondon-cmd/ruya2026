@@ -1,14 +1,43 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSession } from '@/hooks/useSession'
 import { createSession, updateSession } from '@/lib/session'
 import { supabase } from '@/lib/supabase'
+import {
+  DEFAULT_DISPLAY_SCALE,
+  displayScaleChannelName,
+  getStoredDisplayScale,
+  setStoredDisplayScale,
+} from '@/lib/displayScale'
 import type { Session } from '@/types/database'
 
 function LanePanel({ lane, session, loading }: { lane: string; session: Session | null; loading: boolean }) {
   const [busy, setBusy] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+
+  // Display scale — fixes a TV cropping the edges (overscan/zoom) without
+  // needing anyone to type a URL on the TV itself. Sent live over Realtime
+  // Broadcast; the display page also remembers the last value it received.
+  const [scale, setScale] = useState(DEFAULT_DISPLAY_SCALE)
+  const scaleChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
+
+  useEffect(() => {
+    setScale(getStoredDisplayScale(lane) ?? DEFAULT_DISPLAY_SCALE)
+    const channel = supabase.channel(displayScaleChannelName(lane))
+    channel.subscribe()
+    scaleChannelRef.current = channel
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [lane])
+
+  function sendScale(next: number) {
+    const clamped = Math.min(1, Math.max(0.5, Math.round(next * 100) / 100))
+    setScale(clamped)
+    setStoredDisplayScale(lane, clamped)
+    scaleChannelRef.current?.send({ type: 'broadcast', event: 'scale', payload: { scale: clamped } })
+  }
 
   async function run(label: string, fn: () => Promise<void>) {
     setBusy(label)
@@ -93,6 +122,53 @@ function LanePanel({ lane, session, loading }: { lane: string; session: Session 
           {message}
         </div>
       )}
+
+      <div style={{
+        padding: '14px 16px',
+        borderRadius: 8,
+        background: '#0f172a',
+        border: '1px solid #1e293b',
+        marginBottom: 16,
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+          <p style={{ fontSize: 11, color: '#7BBFC6', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
+            Display Size (fixes TV crop/overscan)
+          </p>
+          <span style={{ fontSize: 13, color: '#fff', fontWeight: 600 }}>{Math.round(scale * 100)}%</span>
+        </div>
+        <input
+          type="range"
+          min={0.5}
+          max={1}
+          step={0.01}
+          value={scale}
+          onChange={(e) => sendScale(Number(e.target.value))}
+          style={{ width: '100%', marginBottom: 10 }}
+        />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {[0.8, 0.85, 0.9, 0.95, 1].map((preset) => (
+            <button
+              key={preset}
+              onClick={() => sendScale(preset)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: 6,
+                border: preset === scale ? '1px solid #7BBFC6' : '1px solid #1e293b',
+                background: preset === scale ? '#0D5C6B' : 'transparent',
+                color: '#fff',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {Math.round(preset * 100)}%
+            </button>
+          ))}
+        </div>
+        <p style={{ marginTop: 8, fontSize: 11, color: '#64748b' }}>
+          Applies live to that lane&apos;s display screen — no reload needed. Lower it if the TV is cropping the edges.
+        </p>
+      </div>
 
       <p style={{ fontSize: 11, color: '#7BBFC6', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Live State</p>
       {loading ? (

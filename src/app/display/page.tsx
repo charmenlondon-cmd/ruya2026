@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useSession } from '@/hooks/useSession'
 import { useHires } from '@/hooks/useHires'
+import { useDisplayScale } from '@/hooks/useDisplayScale'
 import { WaitingScreen } from '@/components/display/WaitingScreen'
 import { QuestionScreen } from '@/components/display/QuestionScreen'
 import { FinalResultScreen } from '@/components/display/FinalResultScreen'
@@ -11,19 +12,19 @@ import { ScreensaverScreen } from '@/components/display/ScreensaverScreen'
 import HiredNetworkScreen from '@/components/display/HiredNetworkScreen'
 import type { Language } from '@/types/database'
 
-// Some venue displays (TVs, esp. cheap ones) apply overscan/zoom that crops
-// the edges of the signal instead of showing the full frame. We can't fix
-// that from the browser, so instead we render everything a bit smaller and
-// centred, inside a "TV-safe" margin, so the crop always lands on empty
-// background instead of on real content. Override per-screen with
-// ?scale=0.85 (etc.) if a specific TV needs a tighter margin.
-const DEFAULT_TV_SAFE_SCALE = 0.9
-
 function DisplayInner() {
   const searchParams = useSearchParams()
   const lane = searchParams.get('lane') ?? '1'
+
+  // Some venue displays (TVs, esp. cheap ones) apply overscan/zoom that crops
+  // the edges of the signal instead of showing the full frame. We can't fix
+  // that from the browser, so instead we render everything a bit smaller and
+  // centred, inside a "TV-safe" margin, so the crop always lands on empty
+  // background instead of on real content. Staff can tune this live from the
+  // admin panel per lane; ?scale=0.85 (etc.) is a manual one-off override.
   const scaleParam = Number(searchParams.get('scale'))
-  const tvSafeScale = scaleParam > 0 && scaleParam <= 1 ? scaleParam : DEFAULT_TV_SAFE_SCALE
+  const urlScale = scaleParam > 0 && scaleParam <= 1 ? scaleParam : null
+  const tvSafeScale = useDisplayScale(lane, urlScale)
 
   const { session, loading, error } = useSession(lane)
   const hires = useHires()
