@@ -64,7 +64,17 @@ export function useSession(lane: string): UseSessionResult {
 
     init()
 
+    // Fallback poll — a display's Realtime WebSocket can silently go stale on
+    // venue WiFi over a long-running session, in which case updates (e.g. an
+    // admin action) don't arrive until the client eventually reconnects,
+    // which can take up to a minute or more. Polling every 5s bounds the
+    // worst case to a few seconds regardless of Realtime's connection state.
+    const pollId = setInterval(() => {
+      getActiveSession(lane).then(setSession).catch(() => {})
+    }, 5000)
+
     return () => {
+      clearInterval(pollId)
       if (channel) {
         supabase.removeChannel(channel)
       }
