@@ -24,6 +24,39 @@ const ANSWERS: AnswerDef[] = [
   { key: 'C', textKey: 'answer_c_text', imageKey: 'answer_c_image_url' },
 ]
 
+// Rendered twice: once invisible (reserves the ORIGINAL height in normal
+// flow so nothing below it shifts), once visible+bigger as an absolute
+// overlay on top. Keeps the bar's top edge fixed and the rest of the
+// layout untouched while the bar itself grows ~50%.
+function TopBarContent({ session, strings, big }: { session: Session; strings: ReturnType<typeof t>; big: boolean }) {
+  return (
+    <div
+      className={`flex items-center justify-between bg-black/20 backdrop-blur-sm ${big ? 'px-12 py-[18px]' : 'px-8 py-3'}`}
+    >
+      <div className={`flex items-center ${big ? 'gap-[18px]' : 'gap-3'}`}>
+        {session.avatar_id && (
+          <Image
+            src={`/avatars/${session.avatar_id}.png`}
+            width={big ? 42 : 28}
+            height={big ? 42 : 28}
+            className="rounded-full"
+            alt="Player avatar"
+          />
+        )}
+        <span className={`font-bold text-white ${big ? 'text-3xl' : 'text-xl'}`}>{session.player_name}</span>
+        {session.track && (
+          <span className={`text-aaah-light-teal ${big ? 'text-2xl' : 'text-base'}`}>
+            {strings.trackName(session.track)}
+          </span>
+        )}
+      </div>
+      <span className={`text-white font-semibold ${big ? 'text-2xl' : 'text-base'}`}>
+        {strings.questionOf(session.current_question + 1, 10)}
+      </span>
+    </div>
+  )
+}
+
 export function QuestionScreen({ session, language }: Props) {
   const strings = t(language)
   const [questions, setQuestions] = useState<Question[]>([])
@@ -64,28 +97,15 @@ export function QuestionScreen({ session, language }: Props) {
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-8 py-3 bg-black/20 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          {session.avatar_id && (
-            <Image
-              src={`/avatars/${session.avatar_id}.png`}
-              width={28}
-              height={28}
-              className="rounded-full"
-              alt="Player avatar"
-            />
-          )}
-          <span className="text-xl font-bold text-white">{session.player_name}</span>
-          {session.track && (
-            <span className="text-base text-aaah-light-teal">
-              {strings.trackName(session.track)}
-            </span>
-          )}
+      {/* Top bar — invisible spacer keeps original height in flow, the
+          visible bar overlays on top at 1.5x size without pushing content */}
+      <div className="relative">
+        <div className="invisible" aria-hidden="true">
+          <TopBarContent session={session} strings={strings} big={false} />
         </div>
-        <span className="text-white text-base font-semibold">
-          {strings.questionOf(session.current_question + 1, 10)}
-        </span>
+        <div className="absolute inset-x-0 top-0 z-20">
+          <TopBarContent session={session} strings={strings} big={true} />
+        </div>
       </div>
 
       {/* Main content — pt-40 clears every track's floating decoration
