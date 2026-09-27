@@ -43,6 +43,13 @@ function DisplayInner() {
   const language: Language = session?.language ?? 'en'
   const dir = language === 'ar' ? 'rtl' : 'ltr'
 
+  // 'screensaver' is a state the admin panel's "Force Screensaver" button sets
+  // deliberately (normal gameplay only ever rests at 'idle') — it means "show
+  // the network animation right now", not "start the same 60s countdown as a
+  // natural pause between players". showHiredNetwork still governs the
+  // natural idle->network transition.
+  const showNetworkNow = showHiredNetwork || session?.state === 'screensaver'
+
   // The hired-network/screensaver screens are ambient background visuals with
   // no buttons or fine print to protect — unlike the quiz screens, there's no
   // downside to letting them fill the true screen edge-to-edge (even if a
@@ -64,7 +71,7 @@ function DisplayInner() {
     }
 
     if (!session) {
-      return showHiredNetwork
+      return showNetworkNow
         ? <HiredNetworkScreen hires={hires} />
         : <ScreensaverScreen />
     }
@@ -87,7 +94,7 @@ function DisplayInner() {
       case 'idle':
       case 'screensaver':
       default:
-        return showHiredNetwork
+        return showNetworkNow
           ? <HiredNetworkScreen hires={hires} />
           : <ScreensaverScreen />
     }
