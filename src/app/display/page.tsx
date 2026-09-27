@@ -43,54 +43,69 @@ function DisplayInner() {
   const language: Language = session?.language ?? 'en'
   const dir = language === 'ar' ? 'rtl' : 'ltr'
 
+  // The hired-network/screensaver screens are ambient background visuals with
+  // no buttons or fine print to protect — unlike the quiz screens, there's no
+  // downside to letting them fill the true screen edge-to-edge (even if a
+  // bouncing avatar clips slightly), and they look broken shrunk down inside
+  // the TV-safe margin. So they render outside the scaled wrapper, at 100%.
+  const isAmbientScreen = !loading && !error && (!session || session.state === 'idle' || session.state === 'screensaver')
+
+  const content = (() => {
+    if (loading) {
+      return (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin border-4 border-white border-t-transparent rounded-full w-16 h-16" />
+        </div>
+      )
+    }
+
+    if (error) {
+      return <p className="text-white text-xl text-center p-8">Error: {error}</p>
+    }
+
+    if (!session) {
+      return showHiredNetwork
+        ? <HiredNetworkScreen hires={hires} />
+        : <ScreensaverScreen />
+    }
+
+    switch (session.state) {
+      case 'language_select':
+      case 'avatar_select':
+      case 'name_entry':
+      case 'track_select':
+        return <WaitingScreen session={session} language={language} />
+
+      case 'question_active':
+      case 'answer_submitted':
+      case 'question_result':
+        return <QuestionScreen session={session} language={language} />
+
+      case 'final_result':
+        return <FinalResultScreen session={session} language={language} />
+
+      case 'idle':
+      case 'screensaver':
+      default:
+        return showHiredNetwork
+          ? <HiredNetworkScreen hires={hires} />
+          : <ScreensaverScreen />
+    }
+  })()
+
   return (
     <div className="fixed inset-0 overflow-hidden bg-aaah-near-black">
       <FullscreenButton />
       <div
         dir={dir}
         className="h-screen w-screen overflow-hidden flex flex-col"
-        style={{ transform: `scale(${tvSafeScale})`, transformOrigin: 'top center' }}
+        style={
+          isAmbientScreen
+            ? undefined
+            : { transform: `scale(${tvSafeScale})`, transformOrigin: 'top center' }
+        }
       >
-        {loading && (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="animate-spin border-4 border-white border-t-transparent rounded-full w-16 h-16" />
-          </div>
-        )}
-
-        {!loading && error && (
-          <p className="text-white text-xl text-center p-8">Error: {error}</p>
-        )}
-
-        {!loading && !error && (() => {
-          if (!session) {
-            return showHiredNetwork
-              ? <HiredNetworkScreen hires={hires} />
-              : <ScreensaverScreen />
-          }
-
-          switch (session.state) {
-            case 'language_select':
-            case 'avatar_select':
-            case 'name_entry':
-            case 'track_select':
-              return <WaitingScreen session={session} language={language} />
-
-            case 'question_active':
-            case 'answer_submitted':
-            case 'question_result':
-              return <QuestionScreen session={session} language={language} />
-
-            case 'final_result':
-              return <FinalResultScreen session={session} language={language} />
-
-            case 'idle':
-            case 'screensaver':
-            default:
-              return showHiredNetwork
-                ? <HiredNetworkScreen hires={hires} />
-                : <ScreensaverScreen />
-          }
-        })()}
+        {content}
       </div>
     </div>
   )
