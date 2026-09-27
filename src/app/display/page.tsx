@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { useSession } from '@/hooks/useSession'
 import { useHires } from '@/hooks/useHires'
 import { useDisplayScale } from '@/hooks/useDisplayScale'
+import { FullscreenButton } from '@/components/display/FullscreenButton'
 import { WaitingScreen } from '@/components/display/WaitingScreen'
 import { QuestionScreen } from '@/components/display/QuestionScreen'
 import { FinalResultScreen } from '@/components/display/FinalResultScreen'
@@ -44,6 +45,7 @@ function DisplayInner() {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-aaah-near-black">
+      <FullscreenButton />
       <div
         dir={dir}
         className="h-screen w-screen overflow-hidden flex flex-col"
