@@ -14,16 +14,16 @@ const H_DEC = Math.round(W_DEC * (618 / 710)) // 122
 export function LCAnimation() {
   const anim1 = useLottieFile('/animations/LC_1.json')
 
+  if (!anim1) return null
+
   return (
-    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-      {anim1 && (
-        <Lottie
-          animationData={anim1}
-          loop
-          className="absolute opacity-80"
-          style={{ width: W_BG, height: H_BG, bottom: '24px', right: '24px' }}
-        />
-      )}
+    <div className="absolute pointer-events-none" style={{ top: 'calc(100% + 5px)', right: 0, zIndex: 1 }}>
+      <Lottie
+        animationData={anim1}
+        loop
+        className="opacity-80"
+        style={{ width: W_BG, height: H_BG }}
+      />
     </div>
   )
 }

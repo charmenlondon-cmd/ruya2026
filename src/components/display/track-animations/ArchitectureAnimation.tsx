@@ -15,16 +15,16 @@ const H_DEC = Math.round(W_DEC * (1024 / 1703))  // 84 — AD_1 as card decorati
 export function ArchitectureAnimation() {
   const anim2 = useLottieFile('/animations/AD_2.json')
 
+  if (!anim2) return null
+
   return (
-    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-      {anim2 && (
-        <Lottie
-          animationData={anim2}
-          loop
-          className="absolute opacity-80"
-          style={{ width: W_BG, height: H_BG, bottom: '24px', right: '24px' }}
-        />
-      )}
+    <div className="absolute pointer-events-none" style={{ top: 'calc(100% + 5px)', right: 0, zIndex: 1 }}>
+      <Lottie
+        animationData={anim2}
+        loop
+        className="opacity-80"
+        style={{ width: W_BG, height: H_BG }}
+      />
     </div>
   )
 }
