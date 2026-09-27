@@ -90,64 +90,70 @@ export function QuestionScreen({ session, language }: Props) {
 
       {/* Main content — pt-40 clears every track's floating decoration
           (tallest, Operations, now pokes up ~132px after the 2026-09-27 resize) */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-5 px-10 pt-40 pb-6 relative">
-        {session.track && <TrackAnimation track={session.track} />}
-        {/* Wrapper gives TrackCardDecoration a clean relative anchor above the card */}
-        <div className="relative w-full max-w-4xl z-10">
-          {session.track && <TrackCardDecoration track={session.track} />}
-          {/* Question card */}
-          <div className="bg-white/90 rounded-3xl p-7 w-full">
-            <p
-              dir={language === 'ar' ? 'rtl' : 'ltr'}
-              lang={language}
-              className="text-aaah-dark-teal text-2xl font-semibold text-center leading-relaxed"
-            >
-              {question.question_text}
-            </p>
-          </div>
-        </div>
+      <div className="flex-1 flex flex-col items-center justify-center px-10 pt-40 pb-6 relative">
+        {/* Content column — TrackAnimation is scoped to THIS box (not the full
+            screen width) so it always anchors beside the cards, not off in
+            empty space on a screen much wider than the content. */}
+        <div className="relative w-full max-w-4xl flex flex-col gap-5">
+          {session.track && <TrackAnimation track={session.track} />}
 
-        {/* Answer options — always LTR visual order for A/B/C */}
-        <div className="grid grid-cols-3 gap-4 w-full max-w-4xl relative z-10" dir="ltr">
-          {ANSWERS.map(({ key, textKey, imageKey }) => {
-            const imageUrl = question[imageKey] as string | null
-            const text = question[textKey] as string | null
-            const isSelected = session.state === 'answer_submitted' && session.last_answer === key
-
-            return (
-              <div
-                key={key}
-                className={`rounded-2xl p-4 flex flex-col items-center gap-3 transition-all duration-200 ${
-                  isSelected
-                    ? 'bg-aaah-light-teal/90 ring-4 ring-white scale-105'
-                    : 'bg-white/80'
-                }`}
+          {/* Wrapper gives TrackCardDecoration a clean relative anchor above the card */}
+          <div className="relative w-full z-10">
+            {session.track && <TrackCardDecoration track={session.track} />}
+            {/* Question card */}
+            <div className="bg-white/90 rounded-3xl p-7 w-full">
+              <p
+                dir={language === 'ar' ? 'rtl' : 'ltr'}
+                lang={language}
+                className="text-aaah-dark-teal text-2xl font-semibold text-center leading-relaxed"
               >
-                <div className="w-9 h-9 rounded-full bg-aaah-dark-teal text-white text-lg font-bold flex items-center justify-center flex-shrink-0">
-                  {key}
+                {question.question_text}
+              </p>
+            </div>
+          </div>
+
+          {/* Answer options — always LTR visual order for A/B/C */}
+          <div className="grid grid-cols-3 gap-4 w-full relative z-10" dir="ltr">
+            {ANSWERS.map(({ key, textKey, imageKey }) => {
+              const imageUrl = question[imageKey] as string | null
+              const text = question[textKey] as string | null
+              const isSelected = session.state === 'answer_submitted' && session.last_answer === key
+
+              return (
+                <div
+                  key={key}
+                  className={`rounded-2xl p-4 flex flex-col items-center gap-3 transition-all duration-200 ${
+                    isSelected
+                      ? 'bg-aaah-light-teal/90 ring-4 ring-white scale-105'
+                      : 'bg-white/80'
+                  }`}
+                >
+                  <div className="w-9 h-9 rounded-full bg-aaah-dark-teal text-white text-lg font-bold flex items-center justify-center flex-shrink-0">
+                    {key}
+                  </div>
+                  {imageUrl ? (
+                    <Image
+                      src={imageUrl}
+                      alt={`Answer ${key}`}
+                      width={220}
+                      height={150}
+                      className="object-contain rounded-xl w-full max-h-32"
+                    />
+                  ) : (
+                    <p
+                      dir={language === 'ar' ? 'rtl' : 'ltr'}
+                      lang={language}
+                      className={`text-aaah-dark-teal text-lg font-semibold w-full ${
+                        language === 'ar' ? 'text-right' : 'text-center'
+                      }`}
+                    >
+                      {text}
+                    </p>
+                  )}
                 </div>
-                {imageUrl ? (
-                  <Image
-                    src={imageUrl}
-                    alt={`Answer ${key}`}
-                    width={220}
-                    height={150}
-                    className="object-contain rounded-xl w-full max-h-32"
-                  />
-                ) : (
-                  <p
-                    dir={language === 'ar' ? 'rtl' : 'ltr'}
-                    lang={language}
-                    className={`text-aaah-dark-teal text-lg font-semibold w-full ${
-                      language === 'ar' ? 'text-right' : 'text-center'
-                    }`}
-                  >
-                    {text}
-                  </p>
-                )}
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>
