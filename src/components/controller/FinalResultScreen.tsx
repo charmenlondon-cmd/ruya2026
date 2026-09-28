@@ -19,9 +19,21 @@ export function FinalResultScreen({ session, language }: Props) {
   const strings = t(language)
   const [countdown, setCountdown] = useState(15)
 
-  // Write hire record once on mount for passing scores
+  // Write hire record once on mount for passing scores.
+  // Also guarded via sessionStorage (keyed to this specific game, not just
+  // the lane's session id, which is reused across every game on that lane)
+  // so a remount of this screen within the same tab — e.g. from a stale
+  // Realtime/poll response briefly flipping state and back — can't fire a
+  // second write. hireCreatedRef alone only protects a single mount.
   useEffect(() => {
     if (!isHired || hireCreatedRef.current) return
+    const hireKey = `hire-written:${session.id}:${session.player_name}:${session.avatar_id}:${session.track}:${session.score}`
+    try {
+      if (sessionStorage.getItem(hireKey)) return
+      sessionStorage.setItem(hireKey, '1')
+    } catch {
+      // sessionStorage unavailable — hireCreatedRef still covers same-mount duplicates
+    }
     hireCreatedRef.current = true
     createHire(session).catch(console.error)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

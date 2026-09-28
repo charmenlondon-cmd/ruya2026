@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { getActiveSession } from '@/lib/session'
 import type { Session } from '@/types/database'
@@ -12,16 +12,25 @@ interface UseSessionResult {
   error: string | null
 }
 
+// Only accept an incoming row over the currently-held one if it's not stale.
+// Both the Realtime subscription and the fallback poll below write into the
+// same state, and network responses can arrive out of order — without this,
+// a slow poll response can land after a newer Realtime update and silently
+// regress the UI to an earlier state (e.g. final_result -> question_active
+// -> final_result), which unmounts/remounts state-dependent screens like
+// FinalResultScreen and re-runs their mount effects (e.g. double-writing a
+// hire). A different session id (a genuinely new session row) always wins.
+function applyIncoming(prev: Session | null, incoming: Session | null): Session | null {
+  if (!incoming) return prev
+  if (!prev || incoming.id !== prev.id) return incoming
+  if (incoming.updated_at < prev.updated_at) return prev
+  return incoming
+}
+
 export function useSession(lane: string): UseSessionResult {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-
-  const sessionRef = useRef<Session | null>(null)
-
-  useEffect(() => {
-    sessionRef.current = session
-  }, [session])
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null
@@ -29,7 +38,7 @@ export function useSession(lane: string): UseSessionResult {
     async function init() {
       try {
         const active = await getActiveSession(lane)
-        setSession(active)
+        setSession((prev) => applyIncoming(prev, active))
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load session')
       } finally {
@@ -46,9 +55,10 @@ export function useSession(lane: string): UseSessionResult {
         if (payload.eventType === 'INSERT') {
           setSession(incoming)
         } else if (payload.eventType === 'UPDATE') {
-          if (sessionRef.current && incoming.id === sessionRef.current.id) {
-            setSession(incoming)
-          }
+          setSession((prev) => {
+            if (!prev || incoming.id !== prev.id) return prev
+            return applyIncoming(prev, incoming)
+          })
         }
       }
 
@@ -70,7 +80,9 @@ export function useSession(lane: string): UseSessionResult {
     // which can take up to a minute or more. Polling every 5s bounds the
     // worst case to a few seconds regardless of Realtime's connection state.
     const pollId = setInterval(() => {
-      getActiveSession(lane).then(setSession).catch(() => {})
+      getActiveSession(lane)
+        .then((fetched) => setSession((prev) => applyIncoming(prev, fetched)))
+        .catch(() => {})
     }, 5000)
 
     return () => {
