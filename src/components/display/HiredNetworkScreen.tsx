@@ -158,12 +158,6 @@ export default function HiredNetworkScreen({ hires }: Props) {
         </p>
       </div>
 
-      {hires.length === 0 && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', color: '#475569' }}>
-          <p style={{ fontSize: 18 }}>No hires yet today</p>
-        </div>
-      )}
-
       {hires.map((hire) => (
         <HireCard
           key={hire.id}
