@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { useSession } from '@/hooks/useSession'
 import { useHires } from '@/hooks/useHires'
 import { useDisplayScale } from '@/hooks/useDisplayScale'
+import { useAutoReloadOnNewDeploy } from '@/hooks/useAutoReloadOnNewDeploy'
 import { FullscreenButton } from '@/components/display/FullscreenButton'
 import { WaitingScreen } from '@/components/display/WaitingScreen'
 import { QuestionScreen } from '@/components/display/QuestionScreen'
@@ -14,6 +15,8 @@ import HiredNetworkScreen from '@/components/display/HiredNetworkScreen'
 import type { Language } from '@/types/database'
 
 function DisplayInner() {
+  useAutoReloadOnNewDeploy()
+
   const searchParams = useSearchParams()
   const lane = searchParams.get('lane') ?? '1'
 
