@@ -1,9 +1,11 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createSession, updateSession } from '@/lib/session'
 import { useSession } from '@/hooks/useSession'
+import { supabase } from '@/lib/supabase'
+import { controllerKillChannelName } from '@/lib/controllerKillSwitch'
 import { t } from '@/lib/i18n'
 import { LanguageSelectScreen } from '@/components/controller/LanguageSelectScreen'
 import { AvatarSelectScreen } from '@/components/controller/AvatarSelectScreen'
@@ -36,13 +38,34 @@ function ControllerInner() {
   const [creatingSession, setCreatingSession] = useState(false)
   const { session, loading, error } = useSession(lane)
 
-  if (!loading && session === null && !creatingSession && !error) {
+  // Kill switch: lets the admin panel shut down every open controller tab,
+  // anywhere, at once — for when the URL was shared during testing and
+  // there's no way to know what else might still be open somewhere.
+  const [killed, setKilled] = useState(false)
+  useEffect(() => {
+    const channel = supabase.channel(controllerKillChannelName())
+    channel.on('broadcast', { event: 'kill' }, () => setKilled(true)).subscribe()
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [])
+
+  if (!loading && !killed && session === null && !creatingSession && !error) {
     setCreatingSession(true)
     createSession(lane).catch(console.error)
   }
 
   const language: Language = session?.language ?? 'en'
   const dir = language === 'ar' ? 'rtl' : 'ltr'
+
+  if (killed) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-4">
+        <p className="text-white text-xl font-semibold text-center">Session closed by admin</p>
+        <p className="text-white/60 text-sm text-center">This tab is no longer active. You can close it.</p>
+      </div>
+    )
+  }
 
   return (
     <div dir={dir} className="min-h-screen flex flex-col items-center justify-center p-6">

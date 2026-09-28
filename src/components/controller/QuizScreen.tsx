@@ -36,6 +36,15 @@ export function QuizScreen({ session, language }: Props) {
   const [answeredCorrectly, setAnsweredCorrectly] = useState<Record<number, boolean>>({})
   // Generation counter: incrementing this invalidates any in-flight advance timers
   const genRef = useRef(0)
+  // Synchronous re-entrancy lock for handleAnswer. `answered` state alone isn't
+  // enough: on some touchscreens a single tap can dispatch two events close
+  // enough together that both handleAnswer calls run before React commits the
+  // `answered` state update, so both read the stale `false` and proceed. Each
+  // one then starts its own independent two-write submission chain, and on
+  // the last question that means two separate `final_result` transitions —
+  // which double (or triple, with a third stray event) the resulting hire.
+  // A ref is read/written synchronously, so it closes that window.
+  const submittingRef = useRef(false)
 
   // Keep localIndex in sync if Supabase diverges (e.g. session reset)
   useEffect(() => {
@@ -45,6 +54,7 @@ export function QuizScreen({ session, language }: Props) {
   // Reset answered flag when question index changes
   useEffect(() => {
     setAnswered(false)
+    submittingRef.current = false
   }, [localIndex])
 
   // Load questions when track/language are set
@@ -79,7 +89,8 @@ export function QuizScreen({ session, language }: Props) {
   }
 
   function handleAnswer(answer: CorrectAnswer) {
-    if (answered) return
+    if (submittingRef.current || answered) return
+    submittingRef.current = true
     setAnswered(true)
 
     const isCorrect = answer === question.correct_answer

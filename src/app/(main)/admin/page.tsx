@@ -10,6 +10,7 @@ import {
   getStoredDisplayScale,
   setStoredDisplayScale,
 } from '@/lib/displayScale'
+import { controllerKillChannelName } from '@/lib/controllerKillSwitch'
 import type { Session } from '@/types/database'
 
 function LanePanel({ lane, session, loading }: { lane: string; session: Session | null; loading: boolean }) {
@@ -217,6 +218,25 @@ export default function AdminPage() {
     if (error) throw new Error(error.message)
   }
 
+  async function handleKillControllers() {
+    const channel = supabase.channel(controllerKillChannelName())
+    await new Promise<void>((resolve, reject) => {
+      channel.subscribe((status) => {
+        if (status === 'SUBSCRIBED') resolve()
+        else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          reject(new Error(`Kill switch channel failed: ${status}`))
+        }
+      })
+    })
+    // Send a few times a moment apart — broadcast isn't guaranteed delivery,
+    // and this needs to reach every open tab, not most of them.
+    for (let i = 0; i < 3; i++) {
+      await channel.send({ type: 'broadcast', event: 'kill', payload: {} })
+      await new Promise((resolve) => setTimeout(resolve, 300))
+    }
+    supabase.removeChannel(channel)
+  }
+
   return (
     <main style={{ padding: '40px 48px', maxWidth: 1280, margin: '0 auto', fontFamily: 'Montserrat, sans-serif', color: '#fff' }}>
       <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Admin Panel</h1>
@@ -257,6 +277,37 @@ export default function AdminPage() {
         </div>
         <p style={{ marginTop: 10, fontSize: 12, color: '#64748b' }}>
           Removes all hire records — both displays will show an empty network. Cannot be undone.
+        </p>
+      </section>
+
+      {/* Danger zone */}
+      <section style={{ marginBottom: 40 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#f87171', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>Danger Zone</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+          <button
+            onClick={() => run('Force-Close All Controller Tabs', handleKillControllers)}
+            disabled={busy !== null}
+            style={{
+              padding: '12px 24px',
+              borderRadius: 8,
+              border: '1px solid #dc2626',
+              background: 'transparent',
+              color: '#fca5a5',
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: busy !== null ? 'not-allowed' : 'pointer',
+              opacity: busy !== null ? 0.6 : 1,
+              minWidth: 260,
+            }}
+          >
+            {busy === 'Force-Close All Controller Tabs' ? 'Working…' : 'Force-Close All Controller Tabs'}
+          </button>
+        </div>
+        <p style={{ marginTop: 10, fontSize: 12, color: '#64748b' }}>
+          Immediately shuts down every open /controller tab on every device, everywhere — including the
+          two lane iPads. Use this if the controller link may have been shared or left open somewhere
+          you don&apos;t control. Afterwards, reload the two lane iPads to bring them back; anything
+          else stays shut down until someone deliberately reloads it.
         </p>
       </section>
 
