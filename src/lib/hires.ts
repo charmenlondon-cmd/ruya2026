@@ -2,28 +2,22 @@ import { supabase } from '@/lib/supabase'
 import type { Session } from '@/types/database'
 
 export async function createHire(session: Session): Promise<void> {
-  // Guard: skip only if this exact game's hire was already written.
-  // session_id alone is NOT unique per game — a lane's session row is reused
-  // across every game played on it, so matching on session_id alone would
-  // block every hire after the first one on that lane.
-  const { data: existing } = await supabase
-    .from('hires')
-    .select('id')
-    .eq('session_id', session.id)
-    .eq('player_name', session.player_name!)
-    .eq('avatar_id', session.avatar_id!)
-    .eq('track', session.track!)
-    .eq('score', session.score)
-    .maybeSingle()
-
-  if (existing) return
-
-  const { error } = await supabase.from('hires').insert({
-    session_id: session.id,
-    player_name: session.player_name!,
-    avatar_id: session.avatar_id!,
-    track: session.track!,
-    score: session.score,
-  })
+  // Atomic insert-or-skip via the DB's own unique constraint
+  // (hires_unique_game: session_id, player_name, avatar_id, track, score) —
+  // enforced by Postgres itself, so it can't be raced no matter how many
+  // devices/tabs try to write the same game's result at once. A prior
+  // check-then-insert guard here was inherently racy: two concurrent callers
+  // could both pass the "does it exist" check before either finished
+  // inserting, producing duplicate rows (confirmed live, multiple times).
+  const { error } = await supabase.from('hires').upsert(
+    {
+      session_id: session.id,
+      player_name: session.player_name!,
+      avatar_id: session.avatar_id!,
+      track: session.track!,
+      score: session.score,
+    },
+    { onConflict: 'session_id,player_name,avatar_id,track,score', ignoreDuplicates: true }
+  )
   if (error) throw new Error(`Failed to create hire: ${error.message}`)
 }
