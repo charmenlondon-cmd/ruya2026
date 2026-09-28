@@ -24,11 +24,11 @@ export function useHires(): Hire[] {
         (payload) => {
           const incoming = payload.new as Hire
           setHires((prev) => {
-            const duplicate = prev.some(h =>
-              h.id === incoming.id ||
-              (incoming.session_id && h.session_id === incoming.session_id) ||
-              (h.player_name === incoming.player_name && h.track === incoming.track)
-            )
+            // id is the only field that's actually unique per hire — a lane's
+            // session_id is reused across every game on that lane, and
+            // player_name+track can coincidentally repeat, so matching on
+            // either would wrongly drop distinct players from the feed.
+            const duplicate = prev.some(h => h.id === incoming.id)
             return duplicate ? prev : [...prev, incoming]
           })
         }
