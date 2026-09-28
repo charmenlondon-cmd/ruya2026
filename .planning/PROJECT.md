@@ -160,4 +160,10 @@ User was on-site at the careers fair with the displays live. A chain of issues s
 
 Every fix was verified visually (either via Claude in Chrome against the live production URL, or against a local production build) and confirmed deployed on `ruya2026.vercel.app` before telling the user to check the venue TV. `FinalResultScreen` and `WaitingScreen` were not touched — only `QuestionScreen` — in case similar sizing issues show up there later in the event.
 
-*Last updated: 2026-09-27*
+### 2026-09-28
+
+- Removed the "No hires yet today" placeholder text from the hired-network screen at the user's request — once hires are cleared it now just shows the logo + tagline.
+- Added an auto-reload feature for `/display`: staff were having to manually refresh every venue TV's browser after each code update. A new `/api/version` route reports the live deployment's commit SHA (no-store, so it's never cached), and a `useAutoReloadOnNewDeploy` hook polls it every 60s from `/display`, calling a full page reload the instant it changes. Deliberately scoped to `/display` only (the unattended screens) — `/controller` and `/admin` are actively watched by staff, so a manual refresh there isn't the pain point. Safe to fire at any moment, including mid-quiz, since the display holds no state that isn't already in Supabase.
+- Spent a long stretch chasing what looked like a broken deploy: pushed the auto-reload commit, and `/api/version` kept 404ing for several minutes — confirmed from two different networks (so not just a stale CDN edge on one path), and confirmed the commit really was on `origin/main`. Turned out Vercel had simply never picked up that one push's webhook — the commit didn't appear anywhere in the Vercel dashboard's deployment list, with no error, it just wasn't there, while every deployment before and after it built normally. An empty follow-up commit (`git commit --allow-empty`) re-triggered the webhook and the real deployment (carrying all the "missing" commit's code) went live within the usual ~30-60s. Confirmed fixed via a screenshot of the Vercel deployments list and a direct `/api/version` check showing the correct commit SHA.
+
+*Last updated: 2026-09-28*
